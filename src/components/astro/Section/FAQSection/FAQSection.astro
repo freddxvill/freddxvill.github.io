@@ -5,7 +5,7 @@ import FAQSectionAnimation from "./FAQSectionAnimation.astro";
 import * as m from "@/paraglide/messages";
 import { cn } from "@/lib/utils";
 
-const isBahasa = Astro.locals.paraglide.lang === "id";
+const isSpanish = Astro.locals.paraglide.lang === "es";
 ---
 
 <!-- faq section -->
@@ -16,15 +16,15 @@ const isBahasa = Astro.locals.paraglide.lang === "id";
 		<div
 			class={cn(
 				"col-span-full col-start-1 row-start-2",
-				!isBahasa && "lg:col-span-1 lg:col-start-3 lg:row-start-1",
-				isBahasa && "xl:col-span-1 xl:col-start-3 xl:row-start-1",
+				!isSpanish && "lg:col-span-1 lg:col-start-3 lg:row-start-1",
+				isSpanish && "xl:col-span-1 xl:col-start-3 xl:row-start-1",
 			)}>
 			<ul
 				id="faqContainer"
 				class={cn(
 					"flex flex-col ~pt-8/24 lg:cursor-none [&>li:last-child]:border-b [&>li]:border-t [&>li]:border-muted-foreground/50",
-					!isBahasa && "lg:pt-0",
-					isBahasa && "xl:pt-0",
+					!isSpanish && "lg:pt-0",
+					isSpanish && "xl:pt-0",
 				)}>
 				<FAQSectionAnimation>
 					<span slot="label">01</span>

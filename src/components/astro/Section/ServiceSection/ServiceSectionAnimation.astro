@@ -8,13 +8,7 @@ import { cn, toRoman } from "@/lib/utils";
 
 const { subServices } = Astro.props;
 
-const isBahasa = Astro.locals.paraglide.lang === "id";
-
-const isHK = Astro.locals.paraglide.lang === "zh-HK";
-const isTW = Astro.locals.paraglide.lang === "zh-TW";
-const isCN = Astro.locals.paraglide.lang === "zh-CN";
-const isZH = Astro.locals.paraglide.lang === "zh";
-const isChinese = isHK || isTW || isCN || isZH;
+const isSpanish = Astro.locals.paraglide.lang === "es";
 ---
 
 <section class="serviceSection relative w-full">
@@ -23,9 +17,8 @@ const isChinese = isHK || isTW || isCN || isZH;
 			slot="label"
 			class={cn(
 				"serviceLabel inline-block w-[30px] text-muted-foreground transition-all duration-500 ease-in md:w-auto",
-				!isBahasa && "lg:w-0",
-				isBahasa && "xl:w-0",
-				isChinese && "font-sans",
+				!isSpanish && "lg:w-0",
+				isSpanish && "xl:w-0",
 			)}>
 			<slot name="label" class="text-base" />
 		</span>
@@ -33,9 +26,8 @@ const isChinese = isHK || isTW || isCN || isZH;
 			slot="title"
 			class={cn(
 				"serviceSectionHeader block text-base uppercase md:text-lg",
-				!isBahasa && "lg:mt-2",
-				isBahasa && "xl:mt-2",
-				isChinese && "lg:text-xl",
+				!isSpanish && "lg:mt-2",
+				isSpanish && "xl:mt-2",
 			)}>
 			<slot name="title" />
 		</span>
@@ -43,8 +35,8 @@ const isChinese = isHK || isTW || isCN || isZH;
 			slot="description"
 			class={cn(
 				"flex flex-col gap-3 pt-3 md:pt-4",
-				!isBahasa && "lg:gap-5 lg:pt-0",
-				isBahasa && "xl:gap-5 xl:pt-0",
+				!isSpanish && "lg:gap-5 lg:pt-0",
+				isSpanish && "xl:gap-5 xl:pt-0",
 			)}>
 			<h3
 				class="colorSubheader flex max-w-[500px] flex-1 text-sm leading-[1.4] text-primary md:text-base md:leading-[1.8]">

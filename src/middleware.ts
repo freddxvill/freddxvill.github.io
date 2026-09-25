@@ -1,83 +1,53 @@
 import { defineMiddleware } from "astro:middleware";
-import { isAvailableLanguageTag, sourceLanguageTag } from "./paraglide/runtime";
-import { cookies } from "./lib/clientCookies";
+import {
+	defaultLanguage,
+	isSupportedLanguage,
+	resolvePreferredLanguage,
+} from "../i18n.config.mjs";
 
-// this middleware is mostly for dev only
-// vercel has its own middleware logic and most likely so does cloudflare pages
-// the edgemiddleware option in vercel integration does not work with rewrites and I suggest writing your own
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
-// i18n logic:
-// if url doesnt have lang in first segment, resolve the lang based on
-// 			1.cookie 2.accept-language header 3.fallback to default
-//      if lang turns out to be default, do a rewrite instead of redirect so url remains the same
-// if url has lang in first segment, check if its a valid lang, if not do the steps above, if valid then leave it to astro
+// Astro handles language negotiation locally. Production uses the equivalent
+// Vercel Edge Middleware from /middleware.ts so the generated site stays static.
+export const onRequest = defineMiddleware(async (context, next) => {
+	if (import.meta.env.MODE !== "development") return next();
 
-// assume default is en, resolved lang is en
-// null -> /
-// / -> /
-// /en -> /en
-// /en/ -> /en/
-// /ja/ -> /ja/
+	const firstSegment = context.url.pathname.split("/")[1];
+	if (
+		firstSegment?.startsWith("_") ||
+		/\.(?:png|jpe?g|webp|gif|ico|svg|css|js|xml|txt|webmanifest)$/.test(context.url.pathname) ||
+		firstSegment?.startsWith("manifest.webmanifest") ||
+		firstSegment?.startsWith("dev-sw.js") ||
+		firstSegment?.startsWith("api") ||
+		firstSegment?.startsWith("wrangler")
+	) {
+		return next();
+	}
 
-// assume default is en, resolved lang is ja
-// null -> /ja/
-// / -> /ja/
-// /en -> /en
-// /en/ -> /en/
-// /ja/ -> /ja/
-
-// unsupported lang -> default lang
-
-// ONLY THE INDEX.ASTRO is SSR, all other pages in lang folder are SSG
-// since if the lang is specified in the url, we should not further redirect the user
-
-export const onRequest =
-	import.meta.env.MODE === "development" &&
-	defineMiddleware(async (ctx, next) => {
-		const firstSegment = ctx.url.pathname.split("/")[1] as string | undefined;
-		if (
-			firstSegment?.startsWith("_") ||
-			firstSegment?.startsWith("manifest.webmanifest") ||
-			firstSegment?.startsWith("dev-sw.js") ||
-			firstSegment?.startsWith("api") ||
-			firstSegment?.startsWith("wrangler")
-		)
-			return next();
-		if (isAvailableLanguageTag(firstSegment)) {
-			const date = new Date();
-			date.setTime(date.getTime() + 9999 * 24 * 60 * 60 * 1000);
-			const expires = date;
-			ctx.cookies.set("lang", firstSegment, {
-				expires,
-				sameSite: "lax",
-				secure: true,
-				path: "/",
-			});	
-			return next();
-		}
-
-		const acceptLanguage = ctx.request.headers.get("accept-language");
-
-		let lang: string | undefined = ctx.cookies.get("lang")?.value;
-
-		if (acceptLanguage) {
-			lang = lang ?? acceptLanguage.split(";")[0]?.split(",")[0];
-		}
-
-		if (!lang || !isAvailableLanguageTag(lang)) lang = sourceLanguageTag; // fallback to default lang
-
-		const date = new Date();
-		date.setTime(date.getTime() + 9999 * 24 * 60 * 60 * 1000);
-		const expires = date;
-		ctx.cookies.set("lang", lang, {
-			expires,
-			sameSite: "lax",
-			secure: true,
+	if (isSupportedLanguage(firstSegment)) {
+		context.cookies.set("lang", firstSegment, {
+			maxAge: COOKIE_MAX_AGE,
 			path: "/",
+			sameSite: "lax",
+			secure: false,
 		});
+		return next();
+	}
 
-		if (lang === sourceLanguageTag)
-			return ctx.rewrite(`/${sourceLanguageTag}${ctx.url.pathname}`);
-
-		return ctx.redirect(`/${lang}${ctx.url.pathname}`);
+	const language = resolvePreferredLanguage(
+		context.cookies.get("lang")?.value,
+		context.request.headers.get("accept-language"),
+	);
+	context.cookies.set("lang", language, {
+		maxAge: COOKIE_MAX_AGE,
+		path: "/",
+		sameSite: "lax",
+		secure: false,
 	});
+
+	if (language === defaultLanguage) {
+		return context.rewrite(`/${defaultLanguage}${context.url.pathname}`);
+	}
+
+	return context.redirect(`/${language}${context.url.pathname}`);
+});

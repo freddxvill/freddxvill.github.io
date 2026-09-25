@@ -1,0 +1,155 @@
+---
+import Layout from "@/layouts/Layout.astro";
+import VeryLongArrowRightDown from "@/components/astro/ui/VeryLongArrowRightDown.astro";
+import { portfolio, projects, type Language } from "@/data/portfolio";
+import "@/styles/portfolio.css";
+
+interface Props { lang: Language }
+const { lang } = Astro.props;
+const t = portfolio[lang];
+const isEs = lang === "es";
+const projectTotal = String(projects.length).padStart(2, "0");
+const site = import.meta.env.PUBLIC_SITE_URL?.replace(/\/$/, "");
+const title = "Freddy Villca Villegas | Data Science, Machine Learning & AI Engineering";
+const description = isEs
+  ? "Portafolio de Freddy Villca Villegas: ciencia de datos, aprendizaje automático e ingeniería de IA. Proyectos en visión por computadora, agentes, analítica y despliegue de modelos."
+  : "Portfolio of Freddy Villca Villegas: data science, machine learning and AI engineering. Projects in computer vision, agents, analytics and model deployment.";
+const schema = {
+  "@context": "https://schema.org", "@type": "ProfilePage", name: title, description,
+  ...(site ? { url: `${site}/${lang}/` } : {}),
+  mainEntity: {
+    "@type": "Person", name: "Freddy Villca Villegas",
+    jobTitle: "Electromechanical engineer · Data Science & AI",
+    address: { "@type": "PostalAddress", addressLocality: "Cochabamba", addressCountry: "BO" },
+    alumniOf: { "@type": "CollegeOrUniversity", name: "Universidad Mayor de San Simón" },
+    email: "mailto:fvillcavillegas@gmail.com",
+    sameAs: ["https://github.com/freddxvill", "https://www.linkedin.com/in/freddy-villca-villegas/"],
+  },
+};
+---
+
+<Layout lang={lang} title={title} description={description}>
+  <a class="skip-link" href="#main">{isEs ? "Saltar al contenido" : "Skip to content"}</a>
+  <header class="site-header" id="top"><div class="shell header-inner">
+    <a class="wordmark" href={`/${lang}/`} aria-label="Freddy Villca Villegas — inicio">FV<span class="wordmark-dot">.</span><span class="wordmark-name"> Freddy Villca Villegas</span></a>
+    <nav class="main-nav" aria-label={isEs ? "Navegación principal" : "Main navigation"}>
+      <a href="#proyectos">{t.nav[0]}</a><a href="#perfil">{t.nav[1]}</a><a href="#tecnologias">{t.nav[2]}</a><a href="#contacto">{t.nav[3]}</a>
+    </nav>
+    <a class="language-link" href={isEs ? "/en/" : "/es/"} lang={isEs ? "en" : "es"} aria-label={isEs ? "Switch to English" : "Cambiar a español"}>{isEs ? "EN" : "ES"}<span aria-hidden="true"> ↗</span></a>
+  </div></header>
+
+  <main id="main">
+    <section class="hero shell" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="status-dot"></span>{t.status}</p>
+        <p class="hero-role">{t.role}</p>
+        <h1 id="hero-title"><span>{t.hero[0]}</span><span>{t.hero[1]}</span><em>{t.hero[2]}</em></h1>
+        <p class="hero-intro">{t.intro}</p>
+        <div class="hero-links"><a class="button button-primary" href="#proyectos">{t.work}<span aria-hidden="true"> ↗</span></a><a class="text-link" href="mailto:fvillcavillegas@gmail.com">{t.contact}<span aria-hidden="true"> ↗</span></a></div>
+      </div>
+      <aside class="hero-aside" aria-label={t.sideLabel}>
+        <div class="portrait-wrap"><img src="/freddy-avatar.jpg" alt={isEs ? "Retrato ilustrado de Freddy Villca Villegas" : "Illustrated portrait of Freddy Villca Villegas"} width="460" height="460" fetchpriority="high" /><span class="portrait-corner portrait-corner-one"></span><span class="portrait-corner portrait-corner-two"></span></div>
+        <div class="hero-aside-copy"><span class="small-label">{t.sideLabel}</span><p>{t.side}</p><span class="location">↗ {t.location}</span></div>
+      </aside>
+      <div class="hero-bottom"><span>FREDDY / VILLCA / VILLEGAS</span><a href="#proyectos" aria-label={isEs ? "Ir a proyectos" : "Go to projects"}>↓</a><span>DATA · ML · AI</span></div>
+    </section>
+
+    <section class="work-section" id="proyectos" aria-labelledby="work-title"><div class="shell">
+      <div class="section-heading"><div><p class="section-kicker"><span class="section-index">01</span>{t.workLabel}</p><h2 id="work-title">{t.workTitle}</h2></div><p>{t.workIntro}</p></div>
+      <div class="project-list">
+        {projects.map((project, i) => <article class={`project project-${project.visual}`} id={project.slug}>
+          <div class="project-visual" aria-hidden="true"><div class="visual-grid"></div><span class="visual-number">{String(i + 1).padStart(2, "0")}</span><div class="visual-mark"><span></span><span></span><span></span><span></span><span></span></div><span class="visual-caption">FVV / {project.visual.toUpperCase()}</span></div>
+          <div class="project-content"><div class="project-topline"><span>{t.projects[i].kind}</span><span>{String(i + 1).padStart(2, "0")} / {projectTotal}</span></div><h3>{t.projects[i].title}</h3><div class="project-story"><div><span class="small-label">{t.problemLabel}</span><p>{t.projects[i].problem}</p></div><div><span class="small-label">{t.solutionLabel}</span><p>{t.projects[i].solution}</p></div></div><ul class="tag-list" aria-label={isEs ? "Tecnologías" : "Technologies"}>{project.tags.map((tag) => <li>{tag}</li>)}</ul><div class="project-actions"><a href={project.url} target="_blank" rel="noopener noreferrer">{"link" in project && project.link === "product" ? t.product : t.repo}<span aria-hidden="true"> ↗</span></a>{"demo" in project && project.demo && <a href={project.demo} target="_blank" rel="noopener noreferrer">{t.demo}<span aria-hidden="true"> ↗</span></a>}</div></div>
+        </article>)}
+      </div>
+      <a class="all-projects" href="https://github.com/freddxvill?tab=repositories" target="_blank" rel="noopener noreferrer">{t.all}<span aria-hidden="true"> ↗</span></a>
+    </div></section>
+
+    <section class="about-section" id="perfil" aria-labelledby="about-title"><div class="shell about-grid"><div><p class="section-kicker"><span class="section-index">02</span>{t.aboutLabel}</p><h2 id="about-title">{t.aboutTitle}</h2></div><div class="about-copy"><p>{t.about}</p><div class="about-principle"><span class="small-label">{t.approachLabel}</span><p>{t.approach}</p></div><a class="inline-arrow" href="https://www.linkedin.com/in/freddy-villca-villegas/" target="_blank" rel="noopener noreferrer">LinkedIn <span aria-hidden="true">↗</span></a></div></div></section>
+
+    <section class="toolkit-section" id="tecnologias" aria-labelledby="toolkit-title"><div class="shell"><div class="section-heading"><div><p class="section-kicker"><span class="section-index">03</span>{t.toolsLabel}</p><h2 id="toolkit-title">{t.toolsTitle}</h2></div><p>{t.toolsIntro}</p></div><div class="toolkit-grid"><div><span>01 / {t.groups[0]}</span><p>Python · pandas · SQL · Jupyter · Plotly</p></div><div><span>02 / {t.groups[1]}</span><p>PyTorch · Transformers · MediaPipe · LangGraph · LLM APIs</p></div><div><span>03 / {t.groups[2]}</span><p>FastAPI · Celery · Streamlit · Docker · PostgreSQL · GitHub Actions</p></div></div></div></section>
+
+    <section class="motion-section" aria-labelledby="motion-title"><div class="shell"><div class="motion-heading"><p class="section-kicker"><span class="section-index">04</span>{t.motionLabel}</p><h2 id="motion-title">{t.motionTitle}</h2></div><div class="car-art"><object id="car-motion" data="/car-animation.svg" type="image/svg+xml" role="img" aria-label={t.motionAlt} tabindex="-1"><img src="/car-animation.svg" alt={t.motionAlt} loading="lazy" /></object></div></div></section>
+
+    <section class="contact-section" id="contacto" aria-labelledby="contact-title"><div class="shell">
+      <div class="contact-topline"><p>/ {t.contactLabel} /</p><span>FREDDY VILLCA VILLEGAS · DATA / ML / AI</span></div>
+      <h2 class="contact-display" id="contact-title"><span>{t.contactTitleFirst}</span><span class="contact-display-second"><span>{t.contactTitleSecond}</span><span class="contact-arrow" aria-hidden="true"><VeryLongArrowRightDown /></span></span></h2>
+      <div class="contact-bottom"><p>{t.contactIntro}</p><div class="contact-actions"><a class="button button-light" href="mailto:fvillcavillegas@gmail.com">{t.email}<span aria-hidden="true">↗</span></a><a href="https://www.linkedin.com/in/freddy-villca-villegas/" target="_blank" rel="noopener noreferrer">{t.linkedin}<span aria-hidden="true">↗</span></a><a href="https://github.com/freddxvill" target="_blank" rel="noopener noreferrer">GitHub<span aria-hidden="true">↗</span></a></div></div>
+    </div></section>
+  </main>
+  <footer class="site-footer"><div class="shell footer-inner"><span>© {new Date().getFullYear()} Freddy Villca Villegas</span><span>{t.footer}</span><a href="#top">{t.back} ↑</a></div></footer>
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+</Layout>
+
+<script>
+  import gsap from "gsap";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+  gsap.registerPlugin(ScrollTrigger);
+  const mm = gsap.matchMedia();
+
+  mm.add("(prefers-reduced-motion: no-preference)", () => {
+    gsap.from(".hero .eyebrow, .hero-role, .hero h1 > *, .hero-intro, .hero-links", {
+      y: 28, autoAlpha: 0, duration: 0.8, ease: "power3.out", stagger: 0.09,
+    });
+    gsap.from(".hero-aside", { y: 36, autoAlpha: 0, duration: 1, delay: 0.3, ease: "power3.out" });
+
+    document.querySelectorAll<HTMLElement>(".section-heading, .motion-heading").forEach((heading) => {
+      gsap.from(heading.children, {
+        y: 30, autoAlpha: 0, duration: 0.75, stagger: 0.12, ease: "power2.out",
+        scrollTrigger: { trigger: heading, start: "top 85%", once: true },
+      });
+    });
+    document.querySelectorAll<HTMLElement>(".project").forEach((project) => {
+      gsap.from(project.querySelectorAll(".project-visual, .project-content"), {
+        y: 32, autoAlpha: 0, duration: 0.8, stagger: 0.1, ease: "power2.out",
+        scrollTrigger: { trigger: project, start: "top 82%", once: true },
+      });
+    });
+    gsap.from(".about-grid > div", {
+      y: 36, autoAlpha: 0, duration: 0.85, stagger: 0.12, ease: "power2.out",
+      scrollTrigger: { trigger: ".about-section", start: "top 78%", once: true },
+    });
+    gsap.from(".toolkit-grid > div", {
+      y: 26, autoAlpha: 0, duration: 0.75, stagger: 0.1, ease: "power2.out",
+      scrollTrigger: { trigger: ".toolkit-grid", start: "top 85%", once: true },
+    });
+    gsap.from(".car-art", {
+      y: 36, autoAlpha: 0, duration: 0.85, ease: "power2.out",
+      scrollTrigger: { trigger: ".car-art", start: "top 82%", once: true },
+    });
+    gsap.from(".contact-topline, .contact-display, .contact-bottom", {
+      y: 34, autoAlpha: 0, duration: 0.85, stagger: 0.12, ease: "power2.out",
+      scrollTrigger: { trigger: ".contact-section", start: "top 80%", once: true },
+    });
+
+    const arrowPaths = gsap.utils.toArray<SVGPathElement>(".contact-arrow path");
+    arrowPaths.forEach((path) => {
+      const length = path.getTotalLength() + 2;
+      gsap.set(path, { strokeDasharray: length, strokeDashoffset: length });
+    });
+    gsap.timeline({
+      scrollTrigger: { trigger: ".contact-section", start: "top 82%", end: "top 34%", scrub: 1 },
+      defaults: { ease: "none" },
+    }).to(arrowPaths[1], { strokeDashoffset: 0, duration: 2 })
+      .to(arrowPaths[0], { strokeDashoffset: 0, duration: 0.4 });
+  });
+
+  const car = document.querySelector<HTMLObjectElement>("#car-motion");
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  let carVisible = false;
+  const setCarPlayback = () => {
+    const svg = car?.contentDocument?.documentElement as unknown as SVGSVGElement | null;
+    if (svg?.namespaceURI !== "http://www.w3.org/2000/svg" || typeof svg.pauseAnimations !== "function") return;
+    if (carVisible && !reducedMotion.matches) svg.unpauseAnimations();
+    else svg.pauseAnimations();
+  };
+  car?.addEventListener("load", setCarPlayback);
+  reducedMotion.addEventListener("change", setCarPlayback);
+  if (car) {
+    new IntersectionObserver(([entry]) => {
+      carVisible = entry.isIntersecting;
+      setCarPlayback();
+    }, { rootMargin: "80px" }).observe(car);
+  }
+</script>

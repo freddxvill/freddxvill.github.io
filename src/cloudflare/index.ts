@@ -1,9 +1,9 @@
 /**
  * Welcome to Cloudflare Workers! This is your first worker.
  *
- * - Run `npm run dev` in your terminal to start a development server
+ * - Run `pnpm dev` in your terminal to start a development server
  * - Open a browser tab at http://localhost:8787/ to see your worker in action
- * - Run `npm run deploy` to publish your worker
+ * - Run `pnpm deploy` to publish your worker
  *
  * Bind resources to your worker in `wrangler.toml`. After adding bindings, a type definition for the
  * `Env` object can be regenerated with `npm run cf-typegen`.
@@ -16,10 +16,11 @@ interface Env {
 }
 
 export default {
-	async fetch(request, env, ctx): Promise<Response> {
+	async fetch(request, env, _ctx): Promise<Response> {
 		const cookies = request.headers.get("cookie")?.split("; ") ?? [];
 		const langCookie = cookies.find((cookie) => cookie.startsWith("lang="));
-		const lang: string | undefined = langCookie?.split("=", 2)[1];
+		const cookieLanguage = langCookie?.split("=", 2)[1];
+		const lang = cookieLanguage === "es" ? "es" : "en";
 		
 		const city = request.cf?.city || request.cf?.region || null;
 		const country = request.cf?.country || null;
@@ -135,7 +136,7 @@ export default {
 							city,
 							country,
 							timezone,
-							lang: lang || "en",
+							lang,
 						},
 						groups: ["135355636160399051"],
 					}),

@@ -2,93 +2,35 @@
 import "@/styles/global.css";
 import "@/styles/preflight.css";
 
-// import { pwaInfo } from "virtual:pwa-info";
+interface Props { lang?: "es" | "en"; title?: string; description?: string }
+const { lang = "es", title = "Freddy Villca Villegas", description = "Portafolio de Freddy Villca Villegas." } = Astro.props;
+const site = import.meta.env.PUBLIC_SITE_URL?.replace(/\/$/, "");
+const canonical = site ? `${site}${Astro.url.pathname}` : undefined;
 ---
 
 <!doctype html>
-<html lang={Astro.locals.paraglide.lang} dir={Astro.locals.paraglide.dir}>
-	<head>
-		<!-- do not use keywords meta tag, most engines disregard it or marks it as spam -->
-		<meta name="author" content="Yung Chin Pang, Sam" />
-		<meta charset="UTF-8" />
-		<link
-			rel="alternate"
-			href="https://stablestudio.org"
-			hreflang="x-default"
-		/>
-		<link rel="alternate" href="https://stablestudio.org/en" hreflang="en" />
-		<link rel="alternate" href="https://stablestudio.org/id" hreflang="id" />
-		<link rel="alternate" href="https://stablestudio.org/tl" hreflang="tl" />
-		<link rel="alternate" href="https://stablestudio.org/vi" hreflang="vi" />
-		<link rel="alternate" href="https://stablestudio.org/zh" hreflang="zh" />
-		<link
-			rel="alternate"
-			href="https://stablestudio.org/zh-HK"
-			hreflang="zh-HK"
-		/>
-		<link
-			rel="alternate"
-			href="https://stablestudio.org/zh-HK"
-			hreflang="zh-MO"
-		/>
-		<link
-			rel="alternate"
-			href="https://stablestudio.org/zh-TW"
-			hreflang="zh-TW"
-		/>
-		<link
-			rel="alternate"
-			href="https://stablestudio.org/zh-CN"
-			hreflang="zh-CN"
-		/>
-		<link rel="sitemap" href="/sitemap-index.xml" />
-		<meta name="theme-color" content="#262626" />
-		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="32x32" />
-		<link
-			rel="apple-touch-icon"
-			type="image/png"
-			href="/apple-touch-icon.png"
-		/>
-		<link rel="icon" sizes="any" href="/favicon.svg" type="image/svg+xml" />
-		<meta name="generator" content={Astro.generator} />
-		<slot name="head" />
-		{
-			import.meta.env.MODE !== "development" && (
-				<link
-					rel="preload"
-					href="/font/PPMori-Regular-compressed.woff2"
-					as="font"
-					crossorigin="anonymous"
-				/>
-			)
-		}
-		{
-			import.meta.env.MODE !== "development" && (
-				<link
-					rel="preload"
-					href="/font/PPMori-SemiBold-compressed.woff2"
-					as="font"
-					crossorigin="anonymous"
-				/>
-			)
-		}
-		{
-			import.meta.env.MODE !== "development" && (
-				<script
-					is:inline
-					defer
-					src="/chain.js"
-					data-website-id="2ad1630a-27f4-4314-979f-ffbece150eb1"
-				/>
-			)
-		}
-		<link rel="manifest" href="/manifest.webmanifest" />
-		<!-- <script src="/src/pwa.ts" />
-		{pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />} -->
-	</head>
-
-	<body class="max-w-screen overflow-auto overflow-x-hidden">
-		<slot />
-	</body>
+<html lang={lang}>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#f2f1eb" />
+    <meta name="author" content="Freddy Villca Villegas" />
+    <meta name="description" content={description} />
+    <title>{title}</title>
+    {canonical && <link rel="canonical" href={canonical} />}
+    {site && <link rel="sitemap" href="/sitemap-index.xml" />}
+    {site && <><link rel="alternate" hreflang="es" href={`${site}/es/`} /><link rel="alternate" hreflang="en" href={`${site}/en/`} /><link rel="alternate" hreflang="x-default" href={`${site}/es/`} /></>}
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content={lang === "es" ? "es_BO" : "en_US"} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    {site && <meta property="og:image" content={`${site}/freddy-avatar.jpg`} />}
+    <meta name="twitter:card" content={site ? "summary_large_image" : "summary"} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="preload" href="/font/PPMori-Regular-compressed.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <slot name="head" />
+  </head>
+  <body><slot /></body>
 </html>

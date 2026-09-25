@@ -1,40 +1,29 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import paraglide from "@inlang/paraglide-astro";
-import vercel from "@astrojs/vercel/serverless";
 import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
 import astroMetaTags from "astro-meta-tags";
+import { defaultLanguage, supportedLanguages } from "./i18n.config.mjs";
 // import AstroPWA from "@vite-pwa/astro";
 
 // https://astro.build/config
 export default defineConfig({
-	site: "https://stablestudio.org",
-	output: "hybrid",
-	adapter: vercel({
-		// edgeMiddleware: true,
-	}),
+	site: process.env.PUBLIC_SITE_URL,
+	output: "static",
 	integrations: [
 		paraglide({
 			project: "./project.inlang",
 			outdir: "./src/paraglide",
 		}),
-		sitemap({
+		...(process.env.PUBLIC_SITE_URL ? [sitemap({
 			i18n: {
-				defaultLocale: "en",
-				locales: {
-					en: "en",
-					tl: "tl",
-					id: "id",
-					"zh-HK": "zh-HK",
-					"zh-CN": "zh-CN",
-					vi: "vi",
-					"zh-TW": "zh-TW",
-					zh: "zh",
-					"zh-MO": "zh-HK",
-				},
+				defaultLocale: defaultLanguage,
+				locales: Object.fromEntries(
+					supportedLanguages.map((language) => [language, language]),
+				),
 			},
-		}),
+		})] : []),
 		tailwind({
 			applyBaseStyles: false,
 		}),
@@ -114,8 +103,8 @@ export default defineConfig({
 		remotePatterns: [{ protocol: "https" }],
 	},
 	i18n: {
-		defaultLocale: "en",
-		locales: ["en", "tl", "id", "zh-HK", "zh-CN", "vi", "zh-TW", "zh"],
+		defaultLocale: defaultLanguage,
+		locales: [...supportedLanguages],
 		routing: "manual",
 	},
 });

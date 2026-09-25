@@ -4,21 +4,10 @@ import ArrowBoth from "./ArrowBoth.astro";
 import ArrowBothShort from "./ArrowBothShort.astro";
 
 import * as m from "@/paraglide/messages";
-import { cn } from "@/lib/utils";
-
-const isViet = Astro.locals.paraglide.lang === "vi";
-const isHK = Astro.locals.paraglide.lang === "zh-HK";
-const isCN = Astro.locals.paraglide.lang === "zh-CN";
-const isTW = Astro.locals.paraglide.lang === "zh-TW";
-const isZH = isHK || isCN || isTW || Astro.locals.paraglide.lang === "zh";
 ---
 
 <div
-	class={cn(
-		"flex items-center gap-1 text-flatgray2 animate-infinite-scroll",
-		isZH && "font-sans font-semibold text-xs sm:text-sm",
-		isViet && "overflow-visible",
-	)}>
+	class="flex items-center gap-1 text-flatgray2 animate-infinite-scroll">
 	<span class="animatedDividerText whitespace-nowrap"
 		>{m.lazy_born_gadfly_work()}</span
 	>

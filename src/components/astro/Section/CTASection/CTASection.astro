@@ -11,17 +11,7 @@ import Twitter from "../../ui/Twitter.astro";
 import Meta from "../../ui/Meta.astro";
 import Instagram from "../../ui/Instagram.astro";
 
-const isBahasa = Astro.locals.paraglide.lang === "id";
-const isViet = Astro.locals.paraglide.lang === "vi";
-const isTagalog = Astro.locals.paraglide.lang === "tl";
-
-const isHK = Astro.locals.paraglide.lang === "zh-HK";
-const isTW = Astro.locals.paraglide.lang === "zh-TW";
-const isCN = Astro.locals.paraglide.lang === "zh-CN";
-const isZH = Astro.locals.paraglide.lang === "zh";
-const isChinese = isHK || isTW || isCN || isZH;
-
-const isSmall = isBahasa || isViet || isTagalog;
+const isSmall = Astro.locals.paraglide.lang === "es";
 ---
 
 <section
@@ -59,7 +49,6 @@ const isSmall = isBahasa || isViet || isTagalog;
 						"text-2xl leading-[1] tracking-tight sm:text-3xl md:text-[7vw] md:leading-[1] 3xl:text-[130px]",
 					isSmall &&
 						"text-2xl leading-[1] tracking-tight sm:text-3xl md:text-[5vw] md:leading-[1] 3xl:text-[130px]",
-					isChinese && "leading-[1.4] md:leading-[1.4]",
 				)}>
 				<h1>
 					{m.clean_strong_giraffe_pinch()}
@@ -71,8 +60,6 @@ const isSmall = isBahasa || isViet || isTagalog;
 								"aspect-video w-[130px] translate-x-3 translate-y-3 sm:w-[180px] md:w-[30vw] 3xl:w-[700px]",
 								!isSmall && "md:translate-y-[3vw] 3xl:translate-y-[2vw]",
 								isSmall && "md:translate-y-[2vw]",
-								isChinese &&
-									"translate-y-5 md:translate-y-[5vw] 3xl:translate-y-[3vw]",
 							)}>
 							<VeryLongArrowRightDown />
 						</span></span
@@ -148,10 +135,7 @@ const isSmall = isBahasa || isViet || isTagalog;
 						autocomplete="name"
 						type="text"
 						placeholder={m.loud_male_lobster_bask()}
-						class={cn(
-							"mutedTextInput text-normal h-[50px] border-b border-border/70 bg-transparent text-base font-normal transition-all focus:border-border",
-							isChinese && "text-sm placeholder:!text-xs",
-						)}
+						class="mutedTextInput text-normal h-[50px] border-b border-border/70 bg-transparent text-base font-normal transition-all focus:border-border"
 					/>
 					<input
 						required
@@ -162,19 +146,13 @@ const isSmall = isBahasa || isViet || isTagalog;
 						autocomplete="email"
 						type="email"
 						placeholder={m.sunny_stout_cougar_tend()}
-						class={cn(
-							"mutedTextInput text-normal h-[50px] border-b border-border/70 bg-transparent text-base font-normal transition-all focus:border-border",
-							isChinese && "text-sm placeholder:!text-xs",
-						)}
+						class="mutedTextInput text-normal h-[50px] border-b border-border/70 bg-transparent text-base font-normal transition-all focus:border-border"
 					/>
 					<textarea
 						required
 						name="enquiry"
 						placeholder={m.safe_ago_alligator_soar()}
-						class={cn(
-							"mutedTextInput text-normal m-0 h-[80px] border-b border-border/70 bg-transparent p-0 text-base font-normal outline-none transition-all focus:border-border",
-							isChinese && "text-sm placeholder:!text-xs",
-						)}></textarea>
+						class="mutedTextInput text-normal m-0 h-[80px] border-b border-border/70 bg-transparent p-0 text-base font-normal outline-none transition-all focus:border-border"></textarea>
 
 					<div
 						aria-live="polite"
@@ -213,10 +191,7 @@ const isSmall = isBahasa || isViet || isTagalog;
 							>
 
 							<span
-								class={cn(
-									"relative mt-[2px] flex items-center justify-center overflow-hidden text-xs sm:text-sm",
-									isChinese && "mt-0 text-sm",
-								)}>
+								class="relative mt-[2px] flex items-center justify-center overflow-hidden text-xs sm:text-sm">
 								<span
 									class="translate-y-0 transition duration-300 group-hover:translate-y-[100%]">
 									{m.suave_helpful_lion_evoke()}

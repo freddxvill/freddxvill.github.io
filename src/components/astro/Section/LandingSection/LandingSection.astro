@@ -10,15 +10,7 @@ import Sus from "@/components/astro/ui/Sus.astro";
 import * as m from "@/paraglide/messages";
 import GeometrySquare from "../../ui/GeometrySquare.astro";
 
-const isBahasa = Astro.locals.paraglide.lang === "id";
-const isTagalog = Astro.locals.paraglide.lang === "tl";
-const isHK = Astro.locals.paraglide.lang === "zh-HK";
-const isTW = Astro.locals.paraglide.lang === "zh-TW";
-const isCN = Astro.locals.paraglide.lang === "zh-CN";
-const isZH = Astro.locals.paraglide.lang === "zh";
-
-const isSmall = isBahasa || isTagalog || isHK || isTW || isZH || isCN;
-const isChinese = isZH || isCN || isTW || isHK;
+const isSmall = Astro.locals.paraglide.lang === "es";
 ---
 
 <!-- landing section -->
@@ -37,15 +29,13 @@ const isChinese = isZH || isCN || isTW || isHK;
 				"flex-[2] text-4xl leading-[1.1] sm:text-[9vw] lg:text-[6vw] 3xl:text-[130px]",
 				isSmall &&
 					"text-2xl sm:text-[6vw] xl:text-[4vw] 2xl:text-[4.2vw] 3xl:text-[100px] leading-[1.4] tracking-tight",
-				isChinese && "text-3xl leading-[1.4]",
 			)}>
 			<span class={cn("sm:whitespace-nowrap", isSmall && "relative")}
 				>{m.tasty_wide_toad_renew()}
 				<span
 					class={cn(
 						"inline-block aspect-square w-[36px] translate-y-2 sm:w-[9vw] lg:w-[6vw] 3xl:w-[130px]",
-						(isBahasa || isTagalog || isTW || isCN) && "hidden",
-						isChinese && "translate-x-2",
+						isSmall && "hidden",
 					)}>
 					<GeometrySquare />
 				</span>
@@ -58,7 +48,7 @@ const isChinese = isZH || isCN || isTW || isHK;
 			<div
 				class={cn(
 					"pb-8 uppercase leading-[1.7] opacity-80",
-					(!isSmall || isChinese) && "xl:translate-y-[2vh]",
+					!isSmall && "xl:translate-y-[2vh]",
 				)}
 				id="landingSectionDetails">
 				<AnimatedText>Stable Studio</AnimatedText>
@@ -66,11 +56,7 @@ const isChinese = isZH || isCN || isTW || isHK;
 			</div>
 
 			<a class="flex items-center gap-1" href="#process">
-				<span
-					class={cn(
-						"-mt-1 block size-3 stroke-2 text-black",
-						isChinese && "mt-0",
-					)}>
+				<span class="-mt-1 block size-3 stroke-2 text-black">
 					<ArrowRightDown />
 				</span>
 				<span

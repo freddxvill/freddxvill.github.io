@@ -1,79 +1,55 @@
-// vercel edge middleware
+// Vercel Edge Middleware: language negotiation for the static site.
+import { next, rewrite } from "@vercel/edge";
+import {
+	defaultLanguage,
+	isSupportedLanguage,
+	resolvePreferredLanguage,
+} from "./i18n.config.mjs";
 
-// import { isAvailableLanguageTag, langImport.sourceLanguageTag } from "@/paraglide/runtime";
-import { rewrite, next, type RequestContext } from "@vercel/edge";
+const COOKIE_MAX_AGE = 60 * 60 * 24 * 365;
 
-const langImport = {
-	sourceLanguageTag: "en",
-	languageTags: ["en", "ja", "tl", "id", "zh-HK", "zh-CN", "vi", "zh-TW", "zh"],
-};
+function languageCookie(language: string) {
+	return `lang=${language}; Max-Age=${COOKIE_MAX_AGE}; Path=/; SameSite=Lax; Secure`;
+}
 
-function setCookie(name: string, value: string) {
-	const date = new Date();
-	date.setTime(date.getTime() + 9999 * 24 * 60 * 60 * 1000);
-	const expires = "; Expires=" + date.toUTCString();
-	return (
-		name + "=" + (value || "") + expires + "; Path=/; SameSite=Lax; Secure"
+function getCookie(request: Request, name: string) {
+	const cookies = request.headers.get("cookie")?.split(";") ?? [];
+	const cookie = cookies.find(
+		(entry) => entry.trim().split("=", 1)[0] === name,
 	);
+	return cookie?.trim().slice(name.length + 1);
 }
 
 export const config = {
 	matcher: [
-		"/((?!api|font|.*.html|.*.png|_astro|_image|manifest.webmanifest|favicon.ico|robots.txt|wrangler|.*.xml|.*.svg|sw.js|.*.js).*)",
+		"/((?!api|font|.*.html|.*.png|.*.jpg|.*.jpeg|.*.webp|.*.gif|_astro|_image|manifest.webmanifest|favicon.ico|robots.txt|wrangler|.*.xml|.*.svg|sw.js|.*.js).*)",
 	],
 };
 
-export default function middleware(request: Request, context: RequestContext) {
-	try {
-		const url = new URL(request.url);
-		const firstSegment = url.pathname.split("/")[1] as string | undefined;
-		if (firstSegment && langImport.languageTags.includes(firstSegment)) {
-			const headers = new Headers();
-			headers.append("Set-Cookie", setCookie("lang", firstSegment));
+export default function middleware(request: Request) {
+	const url = new URL(request.url);
+	const firstSegment = url.pathname.split("/")[1];
 
-			return next({
-				headers,
-			});
-		}
-
-		const acceptLanguage = request.headers.get("accept-language");
-
-		// getsetcookies do not work lol
-		const cookies = request.headers.get("cookie")?.split("; ") ?? [];
-		console.log("Cookies: ", cookies);
-		const langCookie = cookies.find((cookie) => cookie.startsWith("lang="));
-		let lang: string | undefined = langCookie?.split("=", 2)[1];
-
-		if (acceptLanguage) {
-			lang = lang ?? acceptLanguage.split(";")[0]?.split(",")[0];
-		}
-
-		if (!lang || !langImport.languageTags.includes(lang))
-			lang = langImport.sourceLanguageTag; // fallback to default lang
-
-		url.pathname = `/${lang}${url.pathname}`;
-		if (!url.pathname.endsWith("/")) url.pathname += "/";
-
-		if (lang === langImport.sourceLanguageTag)
-			return rewrite(url.pathname, {
-				headers: {
-					"Set-Cookie": setCookie("lang", lang),
-				},
-			});
-
-		return new Response(null, {
-			status: 302,
-			headers: {
-				"Set-Cookie": setCookie("lang", lang),
-				Location: url.pathname,
-			},
+	if (isSupportedLanguage(firstSegment)) {
+		return next({
+			headers: { "Set-Cookie": languageCookie(firstSegment) },
 		});
-	} catch (e) {
-		console.error(e);
-
-		// absolute fallback of fallback
-		return Response.redirect(
-			`https://stablestudio.org/${langImport.sourceLanguageTag}/`,
-		);
 	}
+
+	const language = resolvePreferredLanguage(
+		getCookie(request, "lang"),
+		request.headers.get("accept-language"),
+	);
+	url.pathname = `/${language}${url.pathname}`;
+	if (!url.pathname.endsWith("/")) url.pathname += "/";
+
+	const headers = { "Set-Cookie": languageCookie(language) };
+	if (language === defaultLanguage) {
+		return rewrite(url.pathname, { headers });
+	}
+
+	return new Response(null, {
+		status: 302,
+		headers: { ...headers, Location: url.pathname },
+	});
 }

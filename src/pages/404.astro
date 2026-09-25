@@ -1,7 +1,8 @@
 ---
-import CustomError from "@/components/astro/CustomError.astro";
-
-export const prerender = false;
+import Layout from "@/layouts/Layout.astro";
+import "@/styles/portfolio.css";
 ---
-
-<CustomError />
+<Layout title="Página no encontrada | Freddy Villca Villegas" description="La página solicitada no existe.">
+  <main class="not-found shell"><p class="section-kicker">404 / Página no encontrada</p><h1>Esta página no existe.</h1><p>Vuelve al portafolio para explorar mis proyectos de datos e IA.</p><a class="button button-primary" href="/es/">Volver al inicio <span aria-hidden="true">↗</span></a></main>
+</Layout>
+<style>.not-found{min-height:100dvh;display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding-block:4rem}.not-found h1{font-size:clamp(3rem,8vw,7rem);line-height:1;letter-spacing:-.08em;margin:0 0 1.5rem}.not-found p:not(.section-kicker){font-size:1.2rem;max-width:35rem;line-height:1.6;margin-bottom:2rem}</style>
