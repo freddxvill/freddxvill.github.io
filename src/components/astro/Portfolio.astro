@@ -1,5 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import Check from "@/components/astro/ui/Check.astro";
 import VeryLongArrowRightDown from "@/components/astro/ui/VeryLongArrowRightDown.astro";
 import { portfolio, projects, type Language } from "@/data/portfolio";
 import "@/styles/portfolio.css";
@@ -9,6 +10,11 @@ const { lang } = Astro.props;
 const t = portfolio[lang];
 const isEs = lang === "es";
 const projectTotal = String(projects.length).padStart(2, "0");
+const toolGroups = [
+  { items: ["Python", "pandas", "SQL", "Jupyter", "Plotly"], project: "retail" },
+  { items: ["PyTorch", "Transformers", "MediaPipe", "LangGraph", "LLM APIs"], project: "lsb" },
+  { items: ["FastAPI", "Celery", "Streamlit", "Docker", "PostgreSQL", "GitHub Actions"], project: "thinka" },
+] as const;
 const site = import.meta.env.PUBLIC_SITE_URL?.replace(/\/$/, "");
 const title = "Freddy Villca Villegas | Data Science, Machine Learning & AI Engineering";
 const description = isEs
@@ -68,7 +74,16 @@ const schema = {
 
     <section class="about-section" id="perfil" aria-labelledby="about-title"><div class="shell about-grid"><div><p class="section-kicker"><span class="section-index">02</span>{t.aboutLabel}</p><h2 id="about-title">{t.aboutTitle}</h2></div><div class="about-copy"><p>{t.about}</p><div class="about-principle"><span class="small-label">{t.approachLabel}</span><p>{t.approach}</p></div><a class="inline-arrow" href="https://www.linkedin.com/in/freddy-villca-villegas/" target="_blank" rel="noopener noreferrer">LinkedIn <span aria-hidden="true">↗</span></a></div></div></section>
 
-    <section class="toolkit-section" id="tecnologias" aria-labelledby="toolkit-title"><div class="shell"><div class="section-heading"><div><p class="section-kicker"><span class="section-index">03</span>{t.toolsLabel}</p><h2 id="toolkit-title">{t.toolsTitle}</h2></div><p>{t.toolsIntro}</p></div><div class="toolkit-grid"><div><span>01 / {t.groups[0]}</span><p>Python · pandas · SQL · Jupyter · Plotly</p></div><div><span>02 / {t.groups[1]}</span><p>PyTorch · Transformers · MediaPipe · LangGraph · LLM APIs</p></div><div><span>03 / {t.groups[2]}</span><p>FastAPI · Celery · Streamlit · Docker · PostgreSQL · GitHub Actions</p></div></div></div></section>
+    <section class="toolkit-section" id="tecnologias" aria-labelledby="toolkit-title" aria-describedby="toolkit-description"><div class="shell toolkit-shell">
+      <div class="toolkit-intro" id="toolkit-animation"><p class="toolkit-intro-label">/ 03 / DATA · ML · AI</p><h2 id="toolkit-title">{t.toolsTitle}</h2><p id="toolkit-description">{t.toolsIntro}</p></div>
+      <div class="toolkit-details"><div class="toolkit-details-head"><span>/ {t.toolsLabel} /</span><span>FREDDY VILLCA VILLEGAS</span></div>
+        <div class="toolkit-grid">{toolGroups.map((group, i) => <article class={`toolkit-card toolkit-card-${i + 1}`}>
+          <div class="toolkit-card-head"><span>{String(i + 1).padStart(2, "0")} / 03</span><h3>{t.groups[i]}</h3></div>
+          <ul>{group.items.map((item) => <li><span class="toolkit-check" aria-hidden="true"><Check /></span>{item}</li>)}</ul>
+          <a class="toolkit-card-link" href={`#${group.project}`}>{t.toolsProject}<span aria-hidden="true">↗</span></a>
+        </article>)}</div>
+      </div>
+    </div></section>
 
     <section class="motion-section" aria-labelledby="motion-title"><div class="shell"><div class="motion-heading"><p class="section-kicker"><span class="section-index">04</span>{t.motionLabel}</p><h2 id="motion-title">{t.motionTitle}</h2></div><div class="car-art"><object id="car-motion" data="/car-animation.svg" type="image/svg+xml" role="img" aria-label={t.motionAlt} tabindex="-1"><img src="/car-animation.svg" alt={t.motionAlt} loading="lazy" /></object></div></div></section>
 
@@ -111,8 +126,8 @@ const schema = {
       y: 36, autoAlpha: 0, duration: 0.85, stagger: 0.12, ease: "power2.out",
       scrollTrigger: { trigger: ".about-section", start: "top 78%", once: true },
     });
-    gsap.from(".toolkit-grid > div", {
-      y: 26, autoAlpha: 0, duration: 0.75, stagger: 0.1, ease: "power2.out",
+    gsap.from(".toolkit-card", {
+      y: 28, autoAlpha: 0, duration: 0.8, stagger: 0.12, ease: "power2.out",
       scrollTrigger: { trigger: ".toolkit-grid", start: "top 85%", once: true },
     });
     gsap.from(".car-art", {
@@ -134,6 +149,25 @@ const schema = {
       defaults: { ease: "none" },
     }).to(arrowPaths[1], { strokeDashoffset: 0, duration: 2 })
       .to(arrowPaths[0], { strokeDashoffset: 0, duration: 0.4 });
+  });
+
+  mm.add({
+    isShort: "(max-height: 799px)",
+    isNarrow: "(max-width: 450px)",
+    reduceMotion: "(prefers-reduced-motion: reduce)",
+  }, (context) => {
+    if (context.conditions?.reduceMotion || (context.conditions?.isShort && context.conditions?.isNarrow)) return;
+    gsap.fromTo("#toolkit-animation", { filter: "blur(14px)" }, {
+      filter: "blur(0px)", ease: "none",
+      scrollTrigger: { trigger: "#toolkit-animation", start: "top 90%", end: "top 35%", scrub: 1, invalidateOnRefresh: true },
+    });
+  });
+
+  mm.add("(min-width: 768px) and (prefers-reduced-motion: no-preference)", () => {
+    gsap.to(".toolkit-section", {
+      scale: 0.9, transformOrigin: "center bottom", ease: "none",
+      scrollTrigger: { trigger: ".toolkit-section", start: "bottom bottom", end: "bottom top", scrub: 1, invalidateOnRefresh: true },
+    });
   });
 
   mm.add("(min-width: 960px) and (min-height: 680px) and (prefers-reduced-motion: no-preference)", () => {
