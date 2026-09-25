@@ -57,9 +57,10 @@ const schema = {
     <section class="work-section" id="proyectos" aria-labelledby="work-title"><div class="shell">
       <div class="section-heading"><div><p class="section-kicker"><span class="section-index">01</span>{t.workLabel}</p><h2 id="work-title">{t.workTitle}</h2></div><p>{t.workIntro}</p></div>
       <div class="project-list">
-        {projects.map((project, i) => <article class={`project project-${project.visual}`} id={project.slug}>
-          <div class="project-visual" aria-hidden="true"><div class="visual-grid"></div><span class="visual-number">{String(i + 1).padStart(2, "0")}</span><div class="visual-mark"><span></span><span></span><span></span><span></span><span></span></div><span class="visual-caption">FVV / {project.visual.toUpperCase()}</span></div>
-          <div class="project-content"><div class="project-topline"><span>{t.projects[i].kind}</span><span>{String(i + 1).padStart(2, "0")} / {projectTotal}</span></div><h3>{t.projects[i].title}</h3><div class="project-story"><div><span class="small-label">{t.problemLabel}</span><p>{t.projects[i].problem}</p></div><div><span class="small-label">{t.solutionLabel}</span><p>{t.projects[i].solution}</p></div></div><ul class="tag-list" aria-label={isEs ? "Tecnologías" : "Technologies"}>{project.tags.map((tag) => <li>{tag}</li>)}</ul><div class="project-actions"><a href={project.url} target="_blank" rel="noopener noreferrer">{"link" in project && project.link === "product" ? t.product : t.repo}<span aria-hidden="true"> ↗</span></a>{"demo" in project && project.demo && <a href={project.demo} target="_blank" rel="noopener noreferrer">{t.demo}<span aria-hidden="true"> ↗</span></a>}</div></div>
+        {projects.map((project, i) => <article class={`project project-${project.visual}`} id={project.slug} style={`--project-index:${i}`}>
+          <div class="project-head"><span class="project-number">{String(i + 1).padStart(2, "0")} / {projectTotal}</span><h3>{t.projects[i].title}</h3><span class="project-kind">{t.projects[i].kind}</span><span class="project-head-mark" aria-hidden="true">↗</span></div>
+          <div class="project-body"><div class="project-visual" aria-hidden="true"><div class="visual-grid"></div><span class="visual-number">{String(i + 1).padStart(2, "0")}</span><div class="visual-mark"><span></span><span></span><span></span><span></span><span></span></div><span class="visual-caption">FVV / {project.visual.toUpperCase()}</span></div>
+          <div class="project-content"><div class="project-story"><div><span class="small-label">{t.problemLabel}</span><p>{t.projects[i].problem}</p></div><div><span class="small-label">{t.solutionLabel}</span><p>{t.projects[i].solution}</p></div></div><ul class="tag-list" aria-label={isEs ? "Tecnologías" : "Technologies"}>{project.tags.map((tag) => <li>{tag}</li>)}</ul><div class="project-actions"><a href={project.url} target="_blank" rel="noopener noreferrer">{"link" in project && project.link === "product" ? t.product : t.repo}<span aria-hidden="true"> ↗</span></a>{"demo" in project && project.demo && <a href={project.demo} target="_blank" rel="noopener noreferrer">{t.demo}<span aria-hidden="true"> ↗</span></a>}</div></div></div>
         </article>)}
       </div>
       <a class="all-projects" href="https://github.com/freddxvill?tab=repositories" target="_blank" rel="noopener noreferrer">{t.all}<span aria-hidden="true"> ↗</span></a>
@@ -101,8 +102,8 @@ const schema = {
       });
     });
     document.querySelectorAll<HTMLElement>(".project").forEach((project) => {
-      gsap.from(project.querySelectorAll(".project-visual, .project-content"), {
-        y: 32, autoAlpha: 0, duration: 0.8, stagger: 0.1, ease: "power2.out",
+      gsap.from(project.querySelectorAll(".project-body > *"), {
+        y: 24, autoAlpha: 0, duration: 0.7, stagger: 0.07, ease: "power2.out",
         scrollTrigger: { trigger: project, start: "top 82%", once: true },
       });
     });
@@ -133,6 +134,54 @@ const schema = {
       defaults: { ease: "none" },
     }).to(arrowPaths[1], { strokeDashoffset: 0, duration: 2 })
       .to(arrowPaths[0], { strokeDashoffset: 0, duration: 0.4 });
+  });
+
+  mm.add("(min-width: 960px) and (min-height: 680px) and (prefers-reduced-motion: no-preference)", () => {
+    const cards = gsap.utils.toArray<HTMLElement>(".project-list .project");
+    const list = document.querySelector<HTMLElement>(".project-list");
+    const rowHeight = () => cards[0]?.querySelector<HTMLElement>(".project-head")?.offsetHeight ?? 64;
+    let activeIndex = -1;
+    const updateActive = () => {
+      let nextIndex = 0;
+      cards.forEach((card, index) => {
+        if (card.getBoundingClientRect().top <= index * rowHeight() + 8) nextIndex = index;
+      });
+      if (nextIndex === activeIndex) return;
+      activeIndex = nextIndex;
+      cards.forEach((card, index) => card.classList.toggle("is-active", index === activeIndex));
+    };
+
+    if (list) ScrollTrigger.create({
+      trigger: list,
+      start: "top bottom",
+      end: "bottom top",
+      onUpdate: updateActive,
+      onRefresh: updateActive,
+    });
+    const initialUpdate = requestAnimationFrame(updateActive);
+
+    cards.forEach((card, index) => {
+      if (index === 0) return;
+      const previousBody = cards[index - 1].querySelector<HTMLElement>(".project-body");
+      if (!previousBody) return;
+      gsap.to(previousBody, {
+        autoAlpha: 0,
+        ease: "none",
+        scrollTrigger: {
+          trigger: card,
+          start: () => `top top+=${index * rowHeight() + 150}`,
+          end: () => `top top+=${index * rowHeight()}`,
+          scrub: 0.4,
+          invalidateOnRefresh: true,
+        },
+      });
+    });
+
+    return () => {
+      cancelAnimationFrame(initialUpdate);
+      cards.forEach((card) => card.classList.remove("is-active"));
+      gsap.set(cards.map((card) => card.querySelector(".project-body")).filter(Boolean), { clearProps: "opacity,visibility" });
+    };
   });
 
   const car = document.querySelector<HTMLObjectElement>("#car-motion");
