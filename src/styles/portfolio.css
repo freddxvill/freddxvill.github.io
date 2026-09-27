@@ -259,7 +259,7 @@ h2{letter-spacing:-.045em}
 .hero-portrait-stage{position:relative;display:grid;place-items:center;aspect-ratio:1.22;overflow:hidden;background:transparent}
 .hero-portrait-stage .portrait-wrap{width:min(84%,23rem);max-width:none;aspect-ratio:1;border:0;border-radius:50%;background:transparent;box-shadow:none}
 .hero-portrait-stage .portrait-wrap::before{display:none}
-.hero-portrait-stage .portrait-wrap img{filter:none;mix-blend-mode:normal}
+.hero-portrait-stage .portrait-wrap img{filter:none;mix-blend-mode:normal;object-fit:cover;object-position:50% 50%;scale:1.18}
 .hero-aside-copy{margin:0;padding:1.2rem 0 0;border-top:0}
 .hero-aside-heading{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;padding-bottom:.8rem;border-bottom:1px solid var(--line)}
 .hero-aside-heading .small-label,.hero-aside-heading .location{font-size:.76rem;line-height:1.4;letter-spacing:.05em}
@@ -272,13 +272,12 @@ h2{letter-spacing:-.045em}
 @media(max-width:520px){.hero{gap:2.75rem;padding-top:2.75rem}.hero-eyebrow{font-size:.62rem;letter-spacing:.075em}.hero h1{font-size:clamp(2.55rem,10vw,4rem)}.hero-intro{font-size:1rem}.hero-links{gap:1.25rem}.hero-aside{grid-template-columns:6.75rem 1fr;gap:1rem}.hero-aside-heading .small-label,.hero-aside-heading .location{font-size:.66rem}.hero-credentials li{font-size:.8rem}}
 
 /* Keep the complete thought together on the second display line. */
-@media(min-width:981px){.hero{grid-template-columns:minmax(0,1fr) clamp(17rem,24vw,22rem);column-gap:2rem}.hero h1{font-size:clamp(3.1rem,4.1vw,5rem);letter-spacing:-.06em}.hero h1>span:last-child{white-space:nowrap}}
+/* Size the copy column to the headline so the portrait sits next to it instead of across empty space. */
+@media(min-width:981px){.hero{grid-template-columns:auto clamp(17rem,24vw,22rem);justify-content:start;column-gap:clamp(3rem,5vw,6rem);min-height:0;padding-block:clamp(2.5rem,4vw,4.5rem) clamp(3.5rem,5vw,5.5rem)}.hero-credentials{grid-template-columns:1fr;row-gap:.5rem}.hero h1{font-size:clamp(3.1rem,4.1vw,5rem);letter-spacing:-.06em}.hero h1>span:last-child{white-space:nowrap}}
 @media(min-width:521px) and (max-width:980px){.hero{grid-template-columns:1fr;gap:3rem}.hero h1{font-size:clamp(3rem,5.2vw,4.4rem)}.hero h1>span:last-child{white-space:nowrap}.hero-aside{display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1fr);align-items:center;gap:1.5rem}.hero-portrait-stage{aspect-ratio:1}.hero-aside-copy{padding:0}.hero-aside-heading{display:block}.hero-aside-heading .location{display:block;margin-top:.35rem;text-align:left}.hero-credentials{grid-template-columns:1fr;row-gap:.35rem}}
 @media(max-width:760px){.hero h1{font-size:clamp(2.65rem,6vw,3.5rem)}}
 @media(min-width:521px) and (max-width:600px){.hero h1{font-size:clamp(2.25rem,7vw,2.6rem)}.hero h1>span:last-child{white-space:normal;text-wrap:balance}}
 @media(max-width:520px){.hero h1{font-size:clamp(2.55rem,10vw,4rem)}.hero h1>span:last-child{white-space:normal;text-wrap:balance}}
-@media(min-width:1250px){.hero-aside{transform:translateX(-min(9vw,10.5rem))}}
-@media(min-width:1450px){.hero-aside{transform:translateX(-min(13vw,14rem))}}
 /* Let the CTA copy own the left edge; the illustration occupies its own space. */
 .contact-section .contact-display{position:relative;width:100%;line-height:1.04;letter-spacing:-.06em}
 .contact-display-second{display:block;margin-top:.1em}
@@ -287,3 +286,11 @@ h2{letter-spacing:-.045em}
 @media(min-width:901px) and (max-width:1249px){.contact-section .contact-display{font-size:clamp(3rem,5.2vw,4.7rem)}.contact-arrow{display:block;width:min(32vw,18rem);margin:1.5rem 0 0 auto;transform:none}}
 @media(max-width:900px){.contact-arrow{position:static;display:block;width:min(65%,20rem);margin:1.2rem 0 0 auto;transform:none}}
 @media(max-width:760px){.contact-section .contact-display{font-size:clamp(2rem,8.5vw,4rem)}.contact-display-second>span:first-child{white-space:normal;text-wrap:balance}}
+/* Dark card groups the portrait with its credentials, matching the primary button. */
+.hero-aside{padding:clamp(1.25rem,2vw,1.75rem);border-radius:1.75rem;background:var(--ink);color:var(--paper)}
+.hero-aside-heading{display:block;border-bottom-color:rgba(244,244,242,.16)}
+.hero-aside-heading .location{display:block;margin-top:.35rem;text-align:left}
+.hero-aside-heading .small-label,.hero-aside-heading .location{color:rgba(244,244,242,.62)}
+.hero-credentials li{color:rgba(244,244,242,.88)}
+.hero-credentials li::before{color:#7cc4ae}
+@media(max-width:520px){.hero-aside{padding:1rem;border-radius:1.25rem}}
