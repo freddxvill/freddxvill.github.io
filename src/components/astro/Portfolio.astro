@@ -10,10 +10,33 @@ const { lang } = Astro.props;
 const t = portfolio[lang];
 const isEs = lang === "es";
 const projectTotal = String(projects.length).padStart(2, "0");
+const projectImageAlts = {
+  es: [
+    "Logo de Thinka sobre materiales de aprendizaje de color naranja",
+    "Logo de UNATIVE entre dos perfiles y ondas de conversación",
+    "Manos con puntos de seguimiento del movimiento",
+    "Logo de SincroMED entre tarjetas de pacientes y citas",
+    "Conversaciones que avanzan por un flujo de ventas",
+    "Gráfico de divisas y análisis de mercado",
+    "Mapa del Reino Unido con barras de gasto por región",
+    "Fotogramas conectados a un flujo de datos y una API",
+  ],
+  en: [
+    "Thinka logo over orange learning materials",
+    "UNATIVE logo between two profiles and conversation waves",
+    "Hands with movement tracking points",
+    "SincroMED logo between patient and appointment cards",
+    "Conversations moving through a sales pipeline",
+    "Currency chart and market analysis",
+    "Map of the United Kingdom with regional spending bars",
+    "Film frames connected to a data pipeline and API",
+  ],
+} as const;
+const brandedProjects = new Set<string>(["thinka", "syncromedia", "unative"]);
 const toolGroups = [
-  { items: ["Python", "pandas", "SQL", "Jupyter", "Plotly"], project: "retail" },
-  { items: ["PyTorch", "Transformers", "MediaPipe", "LangGraph", "LLM APIs"], project: "lsb" },
-  { items: ["FastAPI", "Celery", "Streamlit", "Docker", "PostgreSQL", "GitHub Actions"], project: "thinka" },
+  { items: ["Python", "pandas", "SQL", "Jupyter", "Plotly", "Sklearn", "Spark"], project: "retail" },
+  { items: ["PyTorch", "Transformers", "MediaPipe", "LangGraph", "LLM APIs", "RAG", "MCP"], project: "lsb" },
+  { items: ["FastAPI", "Celery", "Streamlit", "Docker", "PostgreSQL", "GitHub Actions", "VPS deploy"], project: "thinka" },
 ] as const;
 const site = import.meta.env.PUBLIC_SITE_URL?.replace(/\/$/, "");
 const title = "Freddy Villca Villegas | Data Science, Machine Learning & AI Engineering";
@@ -27,7 +50,6 @@ const schema = {
     "@type": "Person", name: "Freddy Villca Villegas",
     jobTitle: "Electromechanical engineer · Data Science & AI",
     address: { "@type": "PostalAddress", addressLocality: "Cochabamba", addressCountry: "BO" },
-    alumniOf: { "@type": "CollegeOrUniversity", name: "Universidad Mayor de San Simón" },
     email: "mailto:fvillcavillegas@gmail.com",
     sameAs: ["https://github.com/freddxvill", "https://www.linkedin.com/in/freddy-villca-villegas/"],
   },
@@ -39,25 +61,25 @@ const schema = {
   <header class="site-header" id="top"><div class="shell header-inner">
     <a class="wordmark" href={`/${lang}/`} aria-label="Freddy Villca Villegas — inicio">FV<span class="wordmark-dot">.</span><span class="wordmark-name"> Freddy Villca Villegas</span></a>
     <nav class="main-nav" aria-label={isEs ? "Navegación principal" : "Main navigation"}>
-      <a href="#proyectos">{t.nav[0]}</a><a href="#perfil">{t.nav[1]}</a><a href="#tecnologias">{t.nav[2]}</a><a href="#contacto">{t.nav[3]}</a>
+      <a href="#proyectos">{t.nav[0]}</a><a href="#contacto">{t.nav[1]}</a>
     </nav>
-    <a class="language-link" href={isEs ? "/en/" : "/es/"} lang={isEs ? "en" : "es"} aria-label={isEs ? "Switch to English" : "Cambiar a español"}>{isEs ? "EN" : "ES"}<span aria-hidden="true"> ↗</span></a>
+    <a class="language-link" href={isEs ? "/en/" : "/es/"} lang={isEs ? "en" : "es"} aria-label={isEs ? "Switch to English" : "Cambiar a español"}><span class="language-label">{isEs ? "EN" : "ES"}</span><span aria-hidden="true"> ↗</span></a>
   </div></header>
 
   <main id="main">
     <section class="hero shell" aria-labelledby="hero-title">
       <div class="hero-copy">
-        <p class="eyebrow"><span class="status-dot"></span>{t.status}</p>
-        <p class="hero-role">{t.role}</p>
-        <h1 id="hero-title"><span>{t.hero[0]}</span><span>{t.hero[1]}</span><em>{t.hero[2]}</em></h1>
+        <p class="hero-eyebrow">{isEs ? "Ciencia de datos · Machine learning · IA" : "Data science · Machine learning · AI"}</p>
+        <h1 id="hero-title"><span>{t.hero[0]}</span><span>{t.hero[1]} <em>{t.hero[2]}</em></span></h1>
         <p class="hero-intro">{t.intro}</p>
-        <div class="hero-links"><a class="button button-primary" href="#proyectos">{t.work}<span aria-hidden="true"> ↗</span></a><a class="text-link" href="mailto:fvillcavillegas@gmail.com">{t.contact}<span aria-hidden="true"> ↗</span></a></div>
+        <div class="hero-links"><a class="button button-primary" href="#proyectos"><span class="button-arrow" aria-hidden="true">↗</span><span class="button-label">{t.work}</span></a><a class="text-link" href="mailto:fvillcavillegas@gmail.com">{t.contact}<span aria-hidden="true"> ↗</span></a></div>
       </div>
       <aside class="hero-aside" aria-label={t.sideLabel}>
-        <div class="portrait-wrap"><img src="/freddy-avatar.jpg" alt={isEs ? "Retrato ilustrado de Freddy Villca Villegas" : "Illustrated portrait of Freddy Villca Villegas"} width="460" height="460" fetchpriority="high" /><span class="portrait-corner portrait-corner-one"></span><span class="portrait-corner portrait-corner-two"></span></div>
-        <div class="hero-aside-copy"><span class="small-label">{t.sideLabel}</span><p>{t.side}</p><span class="location">↗ {t.location}</span></div>
+        <div class="hero-portrait-stage">
+          <div class="portrait-wrap"><img src="/freddy-avatar.jpg" alt={isEs ? "Retrato ilustrado de Freddy Villca Villegas" : "Illustrated portrait of Freddy Villca Villegas"} width="460" height="460" fetchpriority="high" /></div>
+        </div>
+        <div class="hero-aside-copy"><div class="hero-aside-heading"><span class="small-label">{t.sideLabel}</span><span class="location">↗ {t.location}</span></div><ul class="hero-credentials">{t.side.map((detail) => <li>{detail}</li>)}</ul></div>
       </aside>
-      <div class="hero-bottom"><span>FREDDY / VILLCA / VILLEGAS</span><a href="#proyectos" aria-label={isEs ? "Ir a proyectos" : "Go to projects"}>↓</a><span>DATA · ML · AI</span></div>
     </section>
 
     <section class="work-section" id="proyectos" aria-labelledby="work-title"><div class="shell">
@@ -65,8 +87,8 @@ const schema = {
       <div class="project-list">
         {projects.map((project, i) => <article class={`project project-${project.visual}`} id={project.slug} style={`--project-index:${i}`}>
           <div class="project-head"><span class="project-number">{String(i + 1).padStart(2, "0")} / {projectTotal}</span><h3>{t.projects[i].title}</h3><span class="project-kind">{t.projects[i].kind}</span><span class="project-head-mark" aria-hidden="true">↗</span></div>
-          <div class="project-body"><div class="project-visual" aria-hidden="true"><div class="visual-grid"></div><span class="visual-number">{String(i + 1).padStart(2, "0")}</span><div class="visual-mark"><span></span><span></span><span></span><span></span><span></span></div><span class="visual-caption">FVV / {project.visual.toUpperCase()}</span></div>
-          <div class="project-content"><div class="project-story"><div><span class="small-label">{t.problemLabel}</span><p>{t.projects[i].problem}</p></div><div><span class="small-label">{t.solutionLabel}</span><p>{t.projects[i].solution}</p></div></div><ul class="tag-list" aria-label={isEs ? "Tecnologías" : "Technologies"}>{project.tags.map((tag) => <li>{tag}</li>)}</ul><div class="project-actions"><a href={project.url} target="_blank" rel="noopener noreferrer">{"link" in project && project.link === "product" ? t.product : t.repo}<span aria-hidden="true"> ↗</span></a>{"demo" in project && project.demo && <a href={project.demo} target="_blank" rel="noopener noreferrer">{t.demo}<span aria-hidden="true"> ↗</span></a>}</div></div></div>
+          <div class="project-body"><div class="project-visual"><img class="project-image" src={`/projects/${project.slug}.webp`} alt={projectImageAlts[lang][i]} width="1280" height="853" loading="lazy" decoding="async" />{brandedProjects.has(project.slug) && <img class="project-brand-logo" src={`/projects/${project.slug}-logo.webp`} alt="" loading="lazy" decoding="async" />}</div>
+          <div class="project-content"><div class="project-story"><div><span class="small-label">{t.problemLabel}</span><p>{t.projects[i].problem}</p></div><div><span class="small-label">{t.solutionLabel}</span><p>{t.projects[i].solution}</p></div></div><ul class="tag-list" aria-label={isEs ? "Tecnologías" : "Technologies"}>{project.tags.map((tag) => <li>{tag}</li>)}</ul><div class="project-actions">{"private" in project && project.private ? <span class="private-repo">{t.privateRepo}</span> : <a href={project.url} target="_blank" rel="noopener noreferrer">{"link" in project && project.link === "product" ? t.product : t.repo}<span aria-hidden="true"> ↗</span></a>}{"demo" in project && project.demo && <a href={project.demo} target="_blank" rel="noopener noreferrer">{t.demo}<span aria-hidden="true"> ↗</span></a>}</div></div></div>
         </article>)}
       </div>
       <a class="all-projects" href="https://github.com/freddxvill?tab=repositories" target="_blank" rel="noopener noreferrer">{t.all}<span aria-hidden="true"> ↗</span></a>
@@ -90,22 +112,43 @@ const schema = {
     <section class="contact-section" id="contacto" aria-labelledby="contact-title"><div class="shell">
       <div class="contact-topline"><p>/ {t.contactLabel} /</p><span>FREDDY VILLCA VILLEGAS · DATA / ML / AI</span></div>
       <h2 class="contact-display" id="contact-title"><span>{t.contactTitleFirst}</span><span class="contact-display-second"><span>{t.contactTitleSecond}</span><span class="contact-arrow" aria-hidden="true"><VeryLongArrowRightDown /></span></span></h2>
-      <div class="contact-bottom"><p>{t.contactIntro}</p><div class="contact-actions"><a class="button button-light" href="mailto:fvillcavillegas@gmail.com">{t.email}<span aria-hidden="true">↗</span></a><a href="https://www.linkedin.com/in/freddy-villca-villegas/" target="_blank" rel="noopener noreferrer">{t.linkedin}<span aria-hidden="true">↗</span></a><a href="https://github.com/freddxvill" target="_blank" rel="noopener noreferrer">GitHub<span aria-hidden="true">↗</span></a></div></div>
+      <div class="contact-bottom"><p>{t.contactIntro}</p><div class="contact-actions"><a class="button button-light" href="mailto:fvillcavillegas@gmail.com"><span class="button-arrow" aria-hidden="true">↗</span><span class="button-label">{t.email}</span></a><a href="https://www.linkedin.com/in/freddy-villca-villegas/" target="_blank" rel="noopener noreferrer">{t.linkedin}<span aria-hidden="true">↗</span></a><a href="https://github.com/freddxvill" target="_blank" rel="noopener noreferrer">GitHub<span aria-hidden="true">↗</span></a></div></div>
     </div></section>
   </main>
-  <footer class="site-footer"><div class="shell footer-inner"><span>© {new Date().getFullYear()} Freddy Villca Villegas</span><span>{t.footer}</span><a href="#top">{t.back} ↑</a></div></footer>
   <script type="application/ld+json" set:html={JSON.stringify(schema)} />
 </Layout>
 
 <script>
+  import Lenis from "lenis";
   import gsap from "gsap";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
 
   gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.config({ ignoreMobileResize: true });
+
+  const scrollMotionPreference = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const lenis = new Lenis({ smoothWheel: !scrollMotionPreference.matches });
+  lenis.on("scroll", ScrollTrigger.update);
+  gsap.ticker.add((time) => lenis.raf(time * 1000));
+  gsap.ticker.lagSmoothing(0);
+
+  document.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((link) => {
+    if (link.classList.contains("skip-link")) return;
+    link.addEventListener("click", (event) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const hash = link.getAttribute("href");
+      const target = hash && document.getElementById(hash.slice(1));
+      if (!target) return;
+      event.preventDefault();
+      history.pushState(null, "", hash);
+      lenis.scrollTo(target, { offset: -16, duration: scrollMotionPreference.matches ? 0 : 1.5, immediate: scrollMotionPreference.matches });
+    });
+  });
+
   const mm = gsap.matchMedia();
 
   mm.add("(prefers-reduced-motion: no-preference)", () => {
-    gsap.from(".hero .eyebrow, .hero-role, .hero h1 > *, .hero-intro, .hero-links", {
+    gsap.from(".hero h1 > *, .hero-intro, .hero-links", {
       y: 28, autoAlpha: 0, duration: 0.8, ease: "power3.out", stagger: 0.09,
     });
     gsap.from(".hero-aside", { y: 36, autoAlpha: 0, duration: 1, delay: 0.3, ease: "power3.out" });
@@ -141,14 +184,14 @@ const schema = {
 
     const arrowPaths = gsap.utils.toArray<SVGPathElement>(".contact-arrow path");
     arrowPaths.forEach((path) => {
-      const length = path.getTotalLength() + 2;
+      const length = path.getTotalLength() + 10;
       gsap.set(path, { strokeDasharray: length, strokeDashoffset: length });
     });
     gsap.timeline({
-      scrollTrigger: { trigger: ".contact-section", start: "top 82%", end: "top 34%", scrub: 1 },
+      scrollTrigger: { trigger: ".contact-section", start: "top 30%", end: "bottom bottom", scrub: 1, invalidateOnRefresh: true },
       defaults: { ease: "none" },
     }).to(arrowPaths[1], { strokeDashoffset: 0, duration: 2 })
-      .to(arrowPaths[0], { strokeDashoffset: 0, duration: 0.4 });
+      .to(arrowPaths[0], { strokeDashoffset: 0, duration: 0.5 });
   });
 
   mm.add({

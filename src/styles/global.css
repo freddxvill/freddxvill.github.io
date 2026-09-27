@@ -3,16 +3,16 @@
 @tailwind utilities;
 
 @font-face {
-	font-family: "PPMori";
-	src: url("/font/PPMori-Regular-compressed.woff2") format("woff2");
-	font-weight: normal;
+	font-family: "Inter";
+	src: url("/font/Inter-Variable-Latin.woff2") format("woff2");
+	font-weight: 400 700;
 	font-style: normal;
 	font-display: swap;
 }
 
 @font-face {
-	font-family: "PPMori";
-	src: url("/font/PPMori-SemiBold-compressed.woff2") format("woff2");
+	font-family: "General Sans";
+	src: url("/font/GeneralSans-Semibold.woff2") format("woff2");
 	font-weight: 600;
 	font-style: normal;
 	font-display: swap;

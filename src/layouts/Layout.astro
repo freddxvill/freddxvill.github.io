@@ -13,7 +13,7 @@ const canonical = site ? `${site}${Astro.url.pathname}` : undefined;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="theme-color" content="#f2f1eb" />
+    <meta name="theme-color" content="#f4f4f2" />
     <meta name="author" content="Freddy Villca Villegas" />
     <meta name="description" content={description} />
     <title>{title}</title>
@@ -29,7 +29,8 @@ const canonical = site ? `${site}${Astro.url.pathname}` : undefined;
     <meta name="twitter:card" content={site ? "summary_large_image" : "summary"} />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="/manifest.webmanifest" />
-    <link rel="preload" href="/font/PPMori-Regular-compressed.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="preload" href="/font/GeneralSans-Semibold.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="preload" href="/font/Inter-Variable-Latin.woff2" as="font" type="font/woff2" crossorigin="anonymous" />
     <slot name="head" />
   </head>
   <body><slot /></body>
