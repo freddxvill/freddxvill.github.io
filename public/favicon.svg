@@ -1,1 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="13" fill="#193c31"/><path d="M12 17h21v5H18v9h13v5H18v11h-6V17Zm24 0h6l7 22 7-22h6L51 47h-6L36 17Z" fill="#d5e9d7"/><circle cx="54" cy="49" r="3" fill="#81b68e"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <title>Freddy Villca — FV</title>
+  <defs>
+    <linearGradient id="graphite" x1="8" y1="4" x2="56" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#303030" />
+      <stop offset="1" stop-color="#080808" />
+    </linearGradient>
+  </defs>
+  <rect x=".5" y=".5" width="63" height="63" rx="14" fill="url(#graphite)" stroke="#454545" />
+  <path d="M11 18h17v6H17v6h9v6h-9v11h-6V18Zm20 0h6l5.5 20L48 18h6l-8.5 29h-6L31 18Z" fill="#fff" />
+</svg>

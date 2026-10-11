@@ -1,0 +1,415 @@
+---
+import book from "@phosphor-icons/core/assets/regular/book-open.svg?raw";
+import file from "@phosphor-icons/core/assets/regular/file-text.svg?raw";
+import brain from "@phosphor-icons/core/assets/regular/brain.svg?raw";
+import microphone from "@phosphor-icons/core/assets/regular/microphone.svg?raw";
+import waveform from "@phosphor-icons/core/assets/regular/waveform.svg?raw";
+import hand from "@phosphor-icons/core/assets/regular/hand.svg?raw";
+import text from "@phosphor-icons/core/assets/regular/text-align-left.svg?raw";
+import heart from "@phosphor-icons/core/assets/regular/heartbeat.svg?raw";
+import users from "@phosphor-icons/core/assets/regular/users.svg?raw";
+import calendar from "@phosphor-icons/core/assets/regular/calendar.svg?raw";
+import bell from "@phosphor-icons/core/assets/regular/bell.svg?raw";
+import chat from "@phosphor-icons/core/assets/regular/chat-circle-text.svg?raw";
+import flask from "@phosphor-icons/core/assets/regular/flask.svg?raw";
+import chart from "@phosphor-icons/core/assets/regular/chart-bar.svg?raw";
+import map from "@phosphor-icons/core/assets/regular/map-pin.svg?raw";
+import database from "@phosphor-icons/core/assets/regular/database.svg?raw";
+import code from "@phosphor-icons/core/assets/regular/brackets-angle.svg?raw";
+import { projectFlows, type FlowIcon } from "@/data/projectFlows";
+import type { Language } from "@/data/portfolio";
+
+interface Props {
+	slug: string;
+	lang: Language;
+}
+const { slug, lang } = Astro.props;
+const flow = projectFlows[slug];
+const icons: Record<FlowIcon, string> = {
+	book,
+	file,
+	brain,
+	microphone,
+	waveform,
+	hand,
+	text,
+	heart,
+	users,
+	calendar,
+	bell,
+	chat,
+	flask,
+	chart,
+	map,
+	database,
+	code,
+};
+const desktopPosition = (count: number, index: number) =>
+	count === 1 ? 50 : index === 0 ? 29 : 71;
+const mobilePosition = (count: number, index: number) =>
+	count === 1 ? 50 : index === 0 ? 25 : 75;
+const inputPositions = flow.inputs.map((_, i) =>
+	desktopPosition(flow.inputs.length, i),
+);
+const outputPositions = flow.outputs.map((_, i) =>
+	desktopPosition(flow.outputs.length, i),
+);
+const desktopPaths = [
+	...inputPositions.map((y) => `M29.5 ${y} C34.5 ${y} 31.5 50 36.5 50`),
+	...outputPositions.map((y) => `M63.5 50 C68.5 50 65.5 ${y} 70.5 ${y}`),
+];
+const mobilePaths = [
+	...flow.inputs.map((_, i) => {
+		const x = mobilePosition(flow.inputs.length, i);
+		return `M${x} 28 C${x} 33 50 31 50 36`;
+	}),
+	...flow.outputs.map((_, i) => {
+		const x = mobilePosition(flow.outputs.length, i);
+		return `M50 64 C50 69 ${x} 67 ${x} 72`;
+	}),
+];
+const nodes = [
+	...flow.inputs.map((node, i) => ({
+		...node,
+		stage: "input",
+		x: 16,
+		y: inputPositions[i],
+		row: 1,
+		column: flow.inputs.length === 1 ? "1 / -1" : String(i + 1),
+	})),
+	{
+		...flow.core,
+		stage: "core",
+		x: 50,
+		y: 50,
+		row: 2,
+		column: "1 / -1",
+	},
+	...flow.outputs.map((node, i) => ({
+		...node,
+		stage: "output",
+		x: 84,
+		y: outputPositions[i],
+		row: 3,
+		column: flow.outputs.length === 1 ? "1 / -1" : String(i + 1),
+	})),
+];
+const traceIndices = Array.from(
+	{ length: Math.max(flow.inputs.length, flow.outputs.length) },
+	(_, i) => i,
+);
+const diagrams = [
+	{
+		mode: "desktop",
+		paths: desktopPaths,
+		traces: traceIndices.map((i) => {
+			const y = inputPositions[i % inputPositions.length];
+			const endY = outputPositions[i % outputPositions.length];
+			return `M29.5 ${y} C34.5 ${y} 31.5 50 36.5 50 L63.5 50 C68.5 50 65.5 ${endY} 70.5 ${endY}`;
+		}),
+	},
+	{
+		mode: "mobile",
+		paths: mobilePaths,
+		traces: traceIndices.map((i) => {
+			const x = mobilePosition(flow.inputs.length, i % flow.inputs.length);
+			const endX = mobilePosition(flow.outputs.length, i % flow.outputs.length);
+			return `M${x} 28 C${x} 33 50 31 50 36 L50 64 C50 69 ${endX} 67 ${endX} 72`;
+		}),
+	},
+];
+---
+
+<figure class="project-flow">
+	<figcaption class="flow-heading">
+		<span
+			class="flow-app-icon"
+			aria-hidden="true"
+			set:html={icons[flow.icon]}
+		/>
+		<div>
+			<span class="flow-caption"
+				>{lang === "es" ? "Cómo funciona" : "How it works"}</span
+			><p>{flow.title[lang]}</p>
+		</div>
+	</figcaption>
+	<div class="flow-stage-labels" aria-hidden="true">
+		<span>{lang === "es" ? "Entrada" : "Input"}</span><span
+			>{lang === "es" ? "Proceso" : "Process"}</span
+		><span>{lang === "es" ? "Resultado" : "Output"}</span>
+	</div>
+	<div class="flow-canvas">
+		{
+			diagrams.map(({ mode, paths, traces }) => (
+				<svg
+					class={`flow-links flow-links--${mode}`}
+					viewBox="0 0 100 100"
+					preserveAspectRatio="none"
+					fill="none"
+					aria-hidden="true"
+					focusable="false">
+					<defs>
+						<marker
+							id={`flow-arrow-${slug}-${mode}`}
+							viewBox="0 0 8 8"
+							refX="7"
+							refY="4"
+							markerWidth="5"
+							markerHeight="5"
+							orient="auto">
+							<path
+								d="M1 1 L7 4 L1 7"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="1.2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/>
+						</marker>
+					</defs>
+					<g class="flow-connections" stroke="currentColor" stroke-width="1.2">
+						{paths.map((d) => (
+							<path
+								d={d}
+								vector-effect="non-scaling-stroke"
+								marker-end={`url(#flow-arrow-${slug}-${mode})`}
+							/>
+						))}
+					</g>
+					<g class="flow-pulses" fill="currentColor">
+						{traces.map((route, i) => (
+							<circle r=".55" opacity="0">
+								<animateMotion
+									path={route}
+									dur="7s"
+									begin={`${-i * 3.5}s`}
+									repeatCount="indefinite"
+								/>
+								<animate
+									attributeName="opacity"
+									values="0;.8;.8;0"
+									keyTimes="0;.1;.9;1"
+									dur="7s"
+									begin={`${-i * 3.5}s`}
+									repeatCount="indefinite"
+								/>
+							</circle>
+						))}
+					</g>
+				</svg>
+			))
+		}
+		{
+			nodes.map((node) => (
+				<div
+					class={`flow-node flow-node--${node.stage}`}
+					style={`--x:${node.x}%;--y:${node.y}%;--row:${node.row};--column:${node.column}`}>
+					<span
+						class="flow-node-icon"
+						aria-hidden="true"
+						set:html={icons[node.icon]}
+					/>
+					<>
+						<strong>{node.label[lang]}</strong>
+						<span class="flow-node-detail">{node.detail[lang]}</span>
+					</>
+				</div>
+			))
+		}
+	</div>
+</figure>
+
+<style>
+	.project-flow {
+		margin: 0;
+		width: 100%;
+		padding: clamp(1rem, 2.4vw, 1.75rem);
+		border: 1px solid #d5ddd5;
+		border-radius: 1.25rem;
+		background: #edf1ec;
+		color: #283c35;
+	}
+	.flow-heading {
+		display: flex;
+		align-items: center;
+		gap: 0.9rem;
+	}
+	.flow-app-icon {
+		display: grid;
+		place-items: center;
+		flex-shrink: 0;
+		width: 3rem;
+		height: 3rem;
+		border-radius: 0.85rem;
+		background: #dce8dd;
+		color: #0f766e;
+	}
+	.flow-app-icon :global(svg) {
+		width: 1.65rem;
+		height: 1.65rem;
+	}
+	.flow-caption {
+		color: #52665a;
+		font-size: 0.7rem;
+	}
+	.flow-heading p {
+		margin: 0.15rem 0 0;
+		font:
+			600 clamp(0.95rem, 1.2vw, 1.12rem)/1.3 "General Sans",
+			Arial,
+			sans-serif;
+		letter-spacing: -0.015em;
+	}
+	.flow-stage-labels {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		margin-top: 1.65rem;
+		color: #52665a;
+		text-align: center;
+		font-size: 0.62rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+	.flow-canvas {
+		position: relative;
+		height: 21rem;
+	}
+	.flow-links {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		overflow: visible;
+		color: #0f766e;
+		pointer-events: none;
+	}
+	.flow-links--mobile {
+		display: none;
+	}
+	.flow-connections {
+		opacity: 0.38;
+	}
+	.flow-node {
+		position: absolute;
+		left: var(--x);
+		top: var(--y);
+		transform: translate(-50%, -50%);
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 0.45rem;
+		width: 27%;
+		min-height: 7rem;
+		padding: 0.75rem 0.5rem;
+		border: 1px solid #d5ddd5;
+		border-radius: 0.8rem;
+		background: #f9faf7;
+		text-align: center;
+	}
+	.flow-node-icon {
+		display: block;
+		color: #0f766e;
+	}
+	.flow-node-icon :global(svg) {
+		display: block;
+		width: 1.4rem;
+		height: 1.4rem;
+	}
+	.flow-node strong {
+		font:
+			600 0.82rem/1.25 "General Sans",
+			Arial,
+			sans-serif;
+		overflow-wrap: anywhere;
+	}
+	.flow-node-detail {
+		max-width: 18ch;
+		color: #52665a;
+		font-size: 0.7rem;
+		line-height: 1.4;
+		text-wrap: pretty;
+	}
+	.flow-node--core {
+		min-height: 8rem;
+		border-color: #88bda4;
+		background: #dce8dd;
+	}
+	.flow-node--core .flow-node-icon :global(svg) {
+		width: 1.85rem;
+		height: 1.85rem;
+	}
+	@media (max-width: 560px) {
+		.flow-stage-labels {
+			display: none;
+		}
+		.flow-canvas {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			grid-template-rows: repeat(3, 8rem);
+			gap: 2rem 0.9rem;
+			height: 28rem;
+			margin-top: 1.5rem;
+		}
+		.flow-links--desktop {
+			display: none;
+		}
+		.flow-links--mobile {
+			display: block;
+		}
+		.flow-node {
+			position: relative;
+			left: auto;
+			top: auto;
+			transform: none;
+			grid-row: var(--row);
+			grid-column: var(--column);
+			justify-self: center;
+			width: 100%;
+			max-width: 14rem;
+			min-height: 0;
+			padding: 0.5rem;
+		}
+		.flow-node--core {
+			width: 62%;
+			max-width: 16rem;
+		}
+		.flow-node strong {
+			font-size: 0.84rem;
+		}
+		.flow-node-detail {
+			font-size: 0.72rem;
+		}
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.flow-pulses {
+			display: none;
+		}
+	}
+</style>
+
+<script>
+	const diagrams = document.querySelectorAll<SVGSVGElement>(".flow-links");
+	const preference = window.matchMedia("(prefers-reduced-motion: reduce)");
+	const visible = new Set<SVGSVGElement>();
+	const updatePlayback = () =>
+		diagrams.forEach((diagram) => {
+			if (visible.has(diagram) && !document.hidden && !preference.matches)
+				diagram.unpauseAnimations();
+			else diagram.pauseAnimations();
+		});
+	const observer = new IntersectionObserver((entries) => {
+		entries.forEach(({ target, isIntersecting }) => {
+			const diagram = target as SVGSVGElement;
+			if (isIntersecting) visible.add(diagram);
+			else visible.delete(diagram);
+		});
+		updatePlayback();
+	});
+	diagrams.forEach((diagram) => {
+		diagram.pauseAnimations();
+		observer.observe(diagram);
+	});
+	preference.addEventListener("change", updatePlayback);
+	document.addEventListener("visibilitychange", updatePlayback);
+</script>

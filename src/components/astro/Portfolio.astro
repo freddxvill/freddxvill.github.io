@@ -1,5 +1,7 @@
 ---
 import Layout from "@/layouts/Layout.astro";
+import HeroBackground from "@/components/astro/HeroBackground.astro";
+import ProjectFlowDiagram from "@/components/astro/ProjectFlowDiagram.astro";
 import Check from "@/components/astro/ui/Check.astro";
 import VeryLongArrowRightDown from "@/components/astro/ui/VeryLongArrowRightDown.astro";
 import { portfolio, projects, type Language } from "@/data/portfolio";
@@ -10,29 +12,12 @@ const { lang } = Astro.props;
 const t = portfolio[lang];
 const isEs = lang === "es";
 const projectTotal = String(projects.length).padStart(2, "0");
-const projectImageAlts = {
-  es: [
-    "Logo de Thinka sobre materiales de aprendizaje de color naranja",
-    "Logo de Unative entre dos perfiles y ondas de conversación",
-    "Manos con puntos de seguimiento del movimiento",
-    "Logo de SincroMED entre tarjetas de pacientes y citas",
-    "Conversaciones que avanzan por un flujo de ventas",
-    "Gráfico de divisas y análisis de mercado",
-    "Mapa del Reino Unido con barras de gasto por región",
-    "Fotogramas conectados a un flujo de datos y una API",
-  ],
-  en: [
-    "Thinka logo over orange learning materials",
-    "Unative logo between two profiles and conversation waves",
-    "Hands with movement tracking points",
-    "SincroMED logo between patient and appointment cards",
-    "Conversations moving through a sales pipeline",
-    "Currency chart and market analysis",
-    "Map of the United Kingdom with regional spending bars",
-    "Film frames connected to a data pipeline and API",
-  ],
-} as const;
-const brandedProjects = new Set<string>(["thinka", "syncromedia", "unative"]);
+// Downloaded from the product websites so thumbnails do not depend on remote assets.
+const projectIcons: Record<string, string> = {
+  thinka: "/projects/thinka-icon.png", // https://thinka-ia.com/
+  unative: "/projects/unative-icon.png", // https://landing-unative.vercel.app/
+  syncromedia: "/projects/syncromedia-icon.png", // https://sincromed.com/
+};
 const toolGroups = [
   { items: ["Python", "pandas", "SQL", "Jupyter", "Plotly", "Sklearn", "Spark"], project: "retail" },
   { items: ["PyTorch", "Transformers", "MediaPipe", "LangGraph", "LLM APIs", "RAG", "MCP"], project: "lsb" },
@@ -69,6 +54,7 @@ const schema = {
 
   <main id="main">
     <section class="hero shell" aria-labelledby="hero-title">
+      <HeroBackground />
       <div class="hero-copy">
         <p class="hero-eyebrow">{isEs ? "Ciencia de datos · Machine learning · IA · Automatización" : "Data science · Machine learning · AI · Automation"}</p>
         <h1 id="hero-title"><span>{t.hero[0]}</span><span>{t.hero[1]} <em>{t.hero[2]}</em></span></h1>
@@ -86,10 +72,22 @@ const schema = {
     <section class="work-section" id="proyectos" aria-labelledby="work-title"><div class="shell">
       <div class="section-heading"><div><p class="section-kicker"><span class="section-index">01</span>{t.workLabel}</p><h2 id="work-title">{t.workTitle}</h2></div><p>{t.workIntro}</p></div>
       <div class="project-list">
-        {projects.map((project, i) => <article class={`project project-${project.visual}`} id={project.slug} style={`--project-index:${i}`}>
+        {projects.map((project, i) => <article class={`project project-${project.visual}`} id={project.slug}>
           <div class="project-head"><span class="project-number">{String(i + 1).padStart(2, "0")} / {projectTotal}</span><h3>{t.projects[i].title}</h3><span class="project-kind">{t.projects[i].kind}</span><span class="project-head-mark" aria-hidden="true">↗</span></div>
-          <div class="project-body"><div class="project-visual"><img class="project-image" src={`/projects/${project.slug}.webp`} alt={projectImageAlts[lang][i]} width="1280" height="853" loading="lazy" decoding="async" />{brandedProjects.has(project.slug) && <img class="project-brand-logo" src={`/projects/${project.slug}-logo.webp`} alt="" loading="lazy" decoding="async" />}</div>
-          <div class="project-content"><div class="project-story"><div><span class="small-label">{t.problemLabel}</span><p>{t.projects[i].problem}</p></div><div><span class="small-label">{t.solutionLabel}</span><p>{t.projects[i].solution}</p></div></div><ul class="tag-list" aria-label={isEs ? "Tecnologías" : "Technologies"}>{project.tags.map((tag) => <li>{tag}</li>)}</ul><div class="project-actions">{"private" in project && project.private ? <span class="private-repo">{t.privateRepo}</span> : <a href={project.url} target="_blank" rel="noopener noreferrer">{"link" in project && project.link === "product" ? t.product : t.repo}<span aria-hidden="true"> ↗</span></a>}{"demo" in project && project.demo && <a href={project.demo} target="_blank" rel="noopener noreferrer">{t.demo}<span aria-hidden="true"> ↗</span></a>}</div></div></div>
+          <div class="project-body">
+            <div class="project-content">
+              <div class:list={["project-thumbnail", { "project-thumbnail--icon": Boolean(projectIcons[project.slug]) }]}>
+                <img src={projectIcons[project.slug] ?? `/projects/${project.slug}.webp`} alt={`${projectIcons[project.slug] ? (isEs ? "Icono de" : "Icon for") : (isEs ? "Ilustración de" : "Illustration for")} ${t.projects[i].title}`} width="88" height="88" loading="lazy" decoding="async" />
+              </div>
+              <div class="project-story">
+                <div><span class="small-label">{t.problemLabel}</span><p>{t.projects[i].problem}</p></div>
+                <div><span class="small-label">{t.solutionLabel}</span><ul class="solution-list" role="list">{t.projects[i].solution.map((point) => <li>{point}</li>)}</ul></div>
+              </div>
+              <ul class="tag-list" aria-label={isEs ? "Tecnologías" : "Technologies"}>{project.tags.map((tag) => <li>{tag}</li>)}</ul>
+              <div class="project-actions">{"private" in project && project.private ? <span class="private-repo">{t.privateRepo}</span> : <a href={project.url} target="_blank" rel="noopener noreferrer">{"link" in project && project.link === "product" ? t.product : t.repo}<span aria-hidden="true"> ↗</span></a>}{"demo" in project && project.demo && <a href={project.demo} target="_blank" rel="noopener noreferrer">{t.demo}<span aria-hidden="true"> ↗</span></a>}</div>
+            </div>
+            <div class="project-visual"><ProjectFlowDiagram slug={project.slug} lang={lang} /></div>
+          </div>
         </article>)}
       </div>
       <a class="all-projects" href="https://github.com/freddxvill?tab=repositories" target="_blank" rel="noopener noreferrer">{t.all}<span aria-hidden="true"> ↗</span></a>
@@ -217,12 +215,11 @@ const schema = {
   mm.add("(min-width: 960px) and (min-height: 680px) and (prefers-reduced-motion: no-preference)", () => {
     const cards = gsap.utils.toArray<HTMLElement>(".project-list .project");
     const list = document.querySelector<HTMLElement>(".project-list");
-    const rowHeight = () => cards[0]?.querySelector<HTMLElement>(".project-head")?.offsetHeight ?? 64;
     let activeIndex = -1;
     const updateActive = () => {
       let nextIndex = 0;
       cards.forEach((card, index) => {
-        if (card.getBoundingClientRect().top <= index * rowHeight() + 8) nextIndex = index;
+        if (card.getBoundingClientRect().top <= 8) nextIndex = index;
       });
       if (nextIndex === activeIndex) return;
       activeIndex = nextIndex;
@@ -238,27 +235,9 @@ const schema = {
     });
     const initialUpdate = requestAnimationFrame(updateActive);
 
-    cards.forEach((card, index) => {
-      if (index === 0) return;
-      const previousBody = cards[index - 1].querySelector<HTMLElement>(".project-body");
-      if (!previousBody) return;
-      gsap.to(previousBody, {
-        autoAlpha: 0,
-        ease: "none",
-        scrollTrigger: {
-          trigger: card,
-          start: () => `top top+=${index * rowHeight() + 150}`,
-          end: () => `top top+=${index * rowHeight()}`,
-          scrub: 0.4,
-          invalidateOnRefresh: true,
-        },
-      });
-    });
-
     return () => {
       cancelAnimationFrame(initialUpdate);
       cards.forEach((card) => card.classList.remove("is-active"));
-      gsap.set(cards.map((card) => card.querySelector(".project-body")).filter(Boolean), { clearProps: "opacity,visibility" });
     };
   });
 

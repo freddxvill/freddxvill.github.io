@@ -1,0 +1,195 @@
+---
+const routes = [
+	"M240 720 V630 Q240 600 270 600 H830 Q860 600 860 570 V330 Q860 300 890 300 H1500",
+	"M440 720 V668 Q440 644 464 644 H1016 Q1044 644 1044 616 V120 Q1044 96 1072 96 H1500",
+	"M-80 560 H236 Q264 560 264 588 V608 Q264 636 292 636 H780 Q808 636 808 608 V416 Q808 388 836 388 H1500",
+	"M620 -80 V50 Q620 78 648 78 H1200 Q1228 78 1228 106 V420 Q1228 448 1256 448 H1500",
+	"M1500 572 H1188 Q1160 572 1160 544 V492 Q1160 464 1132 464 H936 Q908 464 908 436 V208 Q908 180 880 180 H736",
+	"M1500 242 H1400 Q1372 242 1372 270 V536 Q1372 564 1344 564 H1280",
+];
+const junctions = [
+	[520, 600],
+	[860, 478],
+	[808, 536],
+	[1044, 220],
+	[1172, 78],
+	[1228, 200],
+	[1312, 448],
+	[1372, 348],
+	[1188, 572],
+	[736, 180],
+	[1280, 564],
+];
+const pulses = [
+	{ path: routes[0], duration: "16s", begin: "-4s" },
+	{ path: routes[3], duration: "20s", begin: "-11s" },
+];
+---
+
+<div class="hero-flow" aria-hidden="true">
+	<svg
+		class="hero-flow-svg"
+		viewBox="0 0 1440 680"
+		fill="none"
+		preserveAspectRatio="none"
+		focusable="false">
+		<defs>
+			<linearGradient id="hero-flow-side" x1="0" y1="0" x2="1" y2="0">
+				<stop offset="0" stop-color="white" stop-opacity="0"></stop>
+				<stop offset=".48" stop-color="white" stop-opacity=".025"></stop>
+				<stop offset=".64" stop-color="white" stop-opacity=".65"></stop>
+				<stop offset="1" stop-color="white"></stop>
+			</linearGradient>
+			<linearGradient id="hero-flow-bottom" x1="0" y1="0" x2="0" y2="1">
+				<stop offset="0" stop-color="white" stop-opacity="0"></stop>
+				<stop offset=".76" stop-color="white" stop-opacity="0"></stop>
+				<stop offset=".9" stop-color="white" stop-opacity=".8"></stop>
+				<stop offset="1" stop-color="white"></stop>
+			</linearGradient>
+			<mask
+				id="hero-flow-reveal"
+				maskUnits="userSpaceOnUse"
+				x="0"
+				y="0"
+				width="1440"
+				height="680">
+				<rect width="1440" height="680" fill="url(#hero-flow-side)"></rect>
+				<rect width="1440" height="680" fill="url(#hero-flow-bottom)"></rect>
+			</mask>
+		</defs>
+
+		<g mask="url(#hero-flow-reveal)">
+			<g
+				class="hero-flow-routes"
+				stroke="currentColor"
+				stroke-width="1.2"
+				stroke-linecap="round">
+				{
+					routes.map((path) => (
+						<path d={path} vector-effect="non-scaling-stroke" />
+					))
+				}
+			</g>
+			<g class="hero-flow-junctions" stroke="currentColor" stroke-width="1.2">
+				{
+					junctions.map(([cx, cy]) => (
+						<circle
+							cx={cx}
+							cy={cy}
+							r="3.5"
+							fill="var(--paper)"
+							vector-effect="non-scaling-stroke"
+						/>
+					))
+				}
+			</g>
+			<g class="hero-flow-pulses" fill="currentColor">
+				{
+					pulses.map(({ path, duration, begin }) => (
+						<circle r="3" opacity="0">
+							<animateMotion
+								path={path}
+								dur={duration}
+								begin={begin}
+								repeatCount="indefinite"
+							/>
+							<animate
+								attributeName="opacity"
+								values="0;.55;.55;0"
+								keyTimes="0;.15;.8;1"
+								dur={duration}
+								begin={begin}
+								repeatCount="indefinite"
+							/>
+						</circle>
+					))
+				}
+			</g>
+		</g>
+	</svg>
+</div>
+
+<style>
+	.hero-flow {
+		position: absolute;
+		z-index: -1;
+		inset: 0;
+		overflow: hidden;
+		color: #0f766e;
+		pointer-events: none;
+		user-select: none;
+		mask-image: linear-gradient(
+			to bottom,
+			transparent,
+			#fff 10%,
+			#fff 88%,
+			transparent
+		);
+	}
+
+	.hero-flow-svg {
+		display: block;
+		width: 100%;
+		height: 100%;
+	}
+
+	.hero-flow-routes {
+		opacity: 0.18;
+	}
+
+	.hero-flow-junctions {
+		opacity: 0.3;
+	}
+
+	@media (max-width: 980px) {
+		.hero-flow {
+			top: auto;
+			height: clamp(22rem, 60vw, 34rem);
+			opacity: 0.8;
+		}
+
+		.hero-flow-svg {
+			width: 180%;
+			max-width: none;
+			transform: translateX(-40%);
+		}
+	}
+
+	@media (max-width: 520px) {
+		.hero-flow {
+			height: 22rem;
+			opacity: 0.65;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.hero-flow-pulses {
+			display: none;
+		}
+	}
+</style>
+
+<script>
+	const flow = document.querySelector<SVGSVGElement>(".hero-flow-svg");
+	const motionPreference = window.matchMedia(
+		"(prefers-reduced-motion: reduce)",
+	);
+	let visible = false;
+
+	const updatePlayback = () => {
+		if (!flow) return;
+		if (visible && !document.hidden && !motionPreference.matches)
+			flow.unpauseAnimations();
+		else flow.pauseAnimations();
+	};
+
+	if (flow) {
+		flow.pauseAnimations();
+		new IntersectionObserver(([entry]) => {
+			visible = entry.isIntersecting;
+			updatePlayback();
+		}).observe(flow);
+		motionPreference.addEventListener("change", updatePlayback);
+		document.addEventListener("visibilitychange", updatePlayback);
+	}
+</script>
