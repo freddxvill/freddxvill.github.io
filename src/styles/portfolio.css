@@ -248,39 +248,39 @@ h2{letter-spacing:-.045em}
 @media(max-width:440px){.hero h1{font-size:clamp(2.25rem,9vw,3.6rem)}}
 @media(prefers-reduced-motion:reduce){.button::before,.language-link::before{transition:none}}
 
-/* Hero: a compact editorial introduction with a framed portrait. */
+/* Hero: a compact introduction with a portrait on the page background. */
 .hero{position:relative;isolation:isolate;grid-template-columns:minmax(0,1.7fr) minmax(19rem,.85fr);align-items:center;column-gap:clamp(3rem,6vw,7rem);min-height:calc(100dvh - 5.5rem);padding-block:clamp(3rem,5vw,5.5rem) clamp(3.5rem,6vw,6rem)}
 .hero-copy{align-self:center;padding:0}
 .hero-eyebrow{margin:0 0 clamp(2rem,4vw,4rem);color:#62645f;font-size:.72rem;font-weight:600;letter-spacing:.11em;text-transform:uppercase}
-.hero h1{font-size:clamp(3.5rem,6vw,7rem);line-height:.98;letter-spacing:-.055em}
+.hero h1,#work-title{font-size:clamp(2.6rem,5vw,5.6rem)}
+.hero h1{line-height:.98;letter-spacing:-.055em}
 .hero h1 em{color:#0f766e}
 .hero-intro{max-width:34rem;margin:clamp(2rem,3vw,3rem) 0 1.8rem;font-size:clamp(1.05rem,1.24vw,1.3rem);line-height:1.6;text-wrap:pretty}
 .hero-links{gap:clamp(1.5rem,3vw,3rem)}
 .hero-links .button-primary{min-width:0;padding:1rem 1.45rem}
 .hero-links .text-link{font-size:.92rem}
-.hero-aside{align-self:center;min-width:0;padding:0}
-.hero-portrait-stage{position:relative;display:grid;place-items:center;aspect-ratio:1.22;overflow:hidden;background:transparent}
-.hero-portrait-stage .portrait-wrap{width:min(84%,23rem);max-width:none;aspect-ratio:1;border:0;border-radius:50%;background:transparent;box-shadow:none}
+.hero-aside{align-self:center;min-width:0;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+.hero-portrait-stage{position:relative;display:grid;place-items:center;aspect-ratio:1034/1047;background:transparent}
+.hero-portrait-stage .portrait-wrap{width:100%;max-width:23rem;aspect-ratio:1034/1047;border:0;border-radius:0;background:transparent;box-shadow:none}
 .hero-portrait-stage .portrait-wrap::before{display:none}
-.hero-portrait-stage .portrait-wrap img{filter:none;mix-blend-mode:normal;object-fit:cover;object-position:50% 50%;scale:1.18}
+.hero-portrait-stage .portrait-wrap img{display:block;filter:none;mix-blend-mode:normal;object-fit:contain;object-position:center bottom;scale:none;mask-image:linear-gradient(to bottom,#000 85%,transparent)}
 .hero-aside-copy{margin:0;padding:1.2rem 0 0;border-top:0}
-.hero-aside-heading{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;padding-bottom:.8rem;border-bottom:1px solid var(--line)}
+.hero-aside-heading{display:block;padding-bottom:.8rem;border:0}
 .hero-aside-heading .small-label,.hero-aside-heading .location{font-size:.76rem;line-height:1.4;letter-spacing:.05em}
-.hero-aside-heading .location{text-align:right}
+.hero-aside-heading .location{display:block;margin-top:.35rem;text-align:left}
 .hero-credentials{grid-template-columns:repeat(2,minmax(0,1fr));column-gap:1.1rem;row-gap:.75rem;max-width:none;margin:1rem 0 0}
 .hero-credentials li{position:relative;padding-left:.95rem;font-size:.95rem;line-height:1.45;color:#4d514d}
 .hero-credentials li::before{position:absolute;left:0;margin:0;color:#0f766e}
-@media(max-width:1050px){.hero{grid-template-columns:minmax(0,1.4fr) minmax(17rem,.8fr);column-gap:3rem}.hero h1{font-size:clamp(3.4rem,6vw,6rem)}}
-@media(max-width:760px){.hero{display:grid;grid-template-columns:1fr;gap:3.5rem;min-height:0;padding-block:3.5rem 4rem}.hero-copy{padding:0}.hero-eyebrow{margin-bottom:2.25rem}.hero h1{font-size:clamp(3.2rem,9vw,5.5rem)}.hero-intro{margin-top:2rem}.hero-aside{display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1fr);align-items:center;gap:1.5rem;padding:0}.hero-portrait-stage{aspect-ratio:1}.hero-portrait-stage .portrait-wrap{width:84%}.hero-aside-copy{padding:0}.hero-aside-heading{display:block}.hero-aside-heading .location{display:block;margin-top:.35rem;text-align:left}.hero-credentials{grid-template-columns:1fr;row-gap:.35rem;margin-top:.8rem}}
-@media(max-width:520px){.hero{gap:2.75rem;padding-top:2.75rem}.hero-eyebrow{font-size:.62rem;letter-spacing:.075em}.hero h1{font-size:clamp(2.55rem,10vw,4rem)}.hero-intro{font-size:1rem}.hero-links{gap:1.25rem}.hero-aside{grid-template-columns:6.75rem 1fr;gap:1rem}.hero-aside-heading .small-label,.hero-aside-heading .location{font-size:.66rem}.hero-credentials li{font-size:.8rem}}
+@media(max-width:1050px){.hero{grid-template-columns:minmax(0,1.4fr) minmax(17rem,.8fr);column-gap:3rem}}
+@media(max-width:760px){.hero{display:grid;grid-template-columns:1fr;gap:3.5rem;min-height:0;padding-block:3.5rem 4rem}.hero-copy{padding:0}.hero-eyebrow{margin-bottom:2.25rem}.hero-intro{margin-top:2rem}.hero-aside{display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1fr);align-items:center;gap:1.5rem;padding:0}.hero-portrait-stage{aspect-ratio:1}.hero-aside-copy{padding:0}.hero-aside-heading{display:block}.hero-aside-heading .location{display:block;margin-top:.35rem;text-align:left}.hero-credentials{grid-template-columns:1fr;row-gap:.35rem;margin-top:.8rem}}
+@media(max-width:520px){.hero{gap:2.75rem;padding-top:2.75rem}.hero-eyebrow{font-size:.62rem;letter-spacing:.075em}.hero-intro{font-size:1rem}.hero-links{gap:1.25rem}.hero-aside{grid-template-columns:6.75rem 1fr;gap:1rem}.hero-aside-heading .small-label,.hero-aside-heading .location{font-size:.66rem}.hero-credentials li{font-size:.8rem}}
 
-/* Keep the complete thought together on the second display line. */
+/* Put the emphasis on a third desktop line to leave more room for the portrait. */
 /* Size the copy column to the headline so the portrait sits next to it instead of across empty space. */
-@media(min-width:981px){.hero{grid-template-columns:auto minmax(17rem,1fr);column-gap:clamp(3rem,5vw,6rem);min-height:0;padding-block:clamp(2.5rem,4vw,4.5rem) clamp(3.5rem,5vw,5.5rem)}.hero-credentials{grid-template-columns:1fr;row-gap:.5rem}.hero h1{font-size:clamp(3.1rem,4.1vw,5rem);letter-spacing:-.06em}.hero h1>span:last-child{white-space:nowrap}.hero-aside{justify-self:center;width:100%;max-width:clamp(17rem,24vw,22rem)}}
-@media(min-width:521px) and (max-width:980px){.hero{grid-template-columns:1fr;gap:3rem}.hero h1{font-size:clamp(3rem,5.2vw,4.4rem)}.hero h1>span:last-child{white-space:nowrap}.hero-aside{display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1fr);align-items:center;gap:1.5rem}.hero-portrait-stage{aspect-ratio:1}.hero-aside-copy{padding:0}.hero-aside-heading{display:block}.hero-aside-heading .location{display:block;margin-top:.35rem;text-align:left}.hero-credentials{grid-template-columns:1fr;row-gap:.35rem}}
-@media(max-width:760px){.hero h1{font-size:clamp(2.65rem,6vw,3.5rem)}}
-@media(min-width:521px) and (max-width:600px){.hero h1{font-size:clamp(2.25rem,7vw,2.6rem)}.hero h1>span:last-child{white-space:normal;text-wrap:balance}}
-@media(max-width:520px){.hero h1{font-size:clamp(2.55rem,10vw,4rem)}.hero h1>span:last-child{white-space:normal;text-wrap:balance}}
+@media(min-width:981px){.hero{grid-template-columns:auto minmax(17rem,1fr);column-gap:clamp(3rem,5vw,6rem);min-height:0;padding-block:clamp(2.5rem,4vw,4.5rem) clamp(3.5rem,5vw,5.5rem)}.hero-credentials{grid-template-columns:1fr;row-gap:.5rem}.hero h1{letter-spacing:-.06em}.hero h1>span:last-child{white-space:nowrap}.hero h1 em{display:block}.hero-aside{justify-self:center;width:100%;max-width:clamp(17rem,24vw,22rem)}.hero-aside-copy{width:fit-content;max-width:100%;margin-inline:auto;text-align:left}}
+@media(min-width:521px) and (max-width:980px){.hero{grid-template-columns:1fr;gap:3rem}.hero h1>span:last-child{white-space:nowrap}.hero-aside{display:grid;grid-template-columns:minmax(0,.75fr) minmax(0,1fr);align-items:center;gap:1.5rem}.hero-portrait-stage{aspect-ratio:1}.hero-aside-copy{padding:0}.hero-aside-heading{display:block}.hero-aside-heading .location{display:block;margin-top:.35rem;text-align:left}.hero-credentials{grid-template-columns:1fr;row-gap:.35rem}}
+@media(min-width:521px) and (max-width:600px){.hero h1>span:last-child{white-space:normal;text-wrap:balance}}
+@media(max-width:520px){.hero h1>span:last-child{white-space:normal;text-wrap:balance}}
 /* Let the CTA copy own the left edge; the illustration occupies its own space. */
 .contact-section .contact-display{position:relative;width:100%;line-height:1.04;letter-spacing:-.06em}
 .contact-display-second{display:block;margin-top:.1em}
@@ -289,11 +289,3 @@ h2{letter-spacing:-.045em}
 @media(min-width:901px) and (max-width:1249px){.contact-section .contact-display{font-size:clamp(3rem,5.2vw,4.7rem)}.contact-arrow{display:block;width:min(32vw,18rem);margin:1.5rem 0 0 auto;transform:none}}
 @media(max-width:900px){.contact-arrow{position:static;display:block;width:min(65%,20rem);margin:1.2rem 0 0 auto;transform:none}}
 @media(max-width:760px){.contact-section .contact-display{font-size:clamp(2rem,8.5vw,4rem)}.contact-display-second>span:first-child{white-space:normal;text-wrap:balance}}
-/* Dark card groups the portrait with its credentials, matching the primary button. */
-.hero-aside{padding:clamp(1.25rem,2vw,1.75rem);border-radius:1.75rem;background:var(--ink);color:var(--paper)}
-.hero-aside-heading{display:block;border-bottom-color:rgba(244,244,242,.16)}
-.hero-aside-heading .location{display:block;margin-top:.35rem;text-align:left}
-.hero-aside-heading .small-label,.hero-aside-heading .location{color:rgba(244,244,242,.62)}
-.hero-credentials li{color:rgba(244,244,242,.88)}
-.hero-credentials li::before{color:#7cc4ae}
-@media(max-width:520px){.hero-aside{padding:1rem;border-radius:1.25rem}}
